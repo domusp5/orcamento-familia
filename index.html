@@ -2,123 +2,112 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Orçamento — Família</title>
+<meta name="apple-mobile-web-app-title" content="Orçamento">
+<title>Orçamento Familiar</title>
 <style>
-  :root {
-    --bg: #f7f6f3;
-    --card: #ffffff;
-    --border: #e8e6e0;
-    --text: #1a1a18;
-    --muted: #888780;
-    --faint: #b4b2a9;
-    --radius: 14px;
-    --green: #1D9E75; --green-bg: #E1F5EE; --green-dark: #085041;
-    --lime: #639922; --lime-bg: #EAF3DE; --lime-dark: #27500A;
-    --amber: #BA7517; --amber-bg: #FAEEDA; --amber-dark: #633806;
-    --coral: #D85A30; --coral-bg: #FAECE7; --coral-dark: #712B13;
-    --pink: #D4537E; --pink-bg: #FBEAF0; --pink-dark: #72243E;
-    --blue: #378ADD; --blue-bg: #E6F1FB; --blue-dark: #0C447C;
-    --purple: #7F77DD; --purple-bg: #EEEDFE; --purple-dark: #3C3489;
-    --rose: #993556; --rose-bg: #FBEAF0; --rose-dark: #4B1528;
-    --gray: #888780; --gray-bg: #F1EFE8; --gray-dark: #444441;
-    --danger: #E24B4A; --danger-bg: #FCEBEB; --danger-dark: #791F1F;
-    --success: #639922; --success-bg: #EAF3DE;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
-
-  .header { background: #1a1a18; color: #fff; padding: 20px 20px 16px; position: sticky; top: 0; z-index: 10; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-  .header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
-  .header-month { font-size: 13px; color: #888780; }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #639922; margin-top: 6px; }
-  .sync-dot.syncing { background: #BA7517; animation: pulse 1s infinite; }
-  .sync-dot.error { background: #E24B4A; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-  .summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; }
-  .sum-card { background: var(--card); border-radius: 12px; border: 0.5px solid var(--border); padding: 12px 14px; }
-  .sum-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
-  .sum-val { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
-  .sum-val.ok { color: var(--green); }
-  .sum-val.warn { color: var(--amber); }
-  .sum-val.danger { color: var(--danger); }
-
-  .section-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; padding: 0 20px 8px; }
-
-  .cats { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
-  .cat-card { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); padding: 13px 15px; }
-  .cat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .cat-dot-name { display: flex; align-items: center; gap: 8px; }
-  .cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .cat-name { font-size: 14px; font-weight: 500; }
-  .cat-amounts { text-align: right; }
-  .cat-spent { font-size: 15px; font-weight: 600; }
-  .cat-teto { font-size: 12px; color: var(--muted); }
-  .bar-bg { height: 5px; border-radius: 3px; background: var(--bg); overflow: hidden; margin-bottom: 6px; }
-  .bar-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
-  .cat-footer { font-size: 11px; color: var(--muted); }
-  .cat-footer.over { color: var(--danger); font-weight: 500; }
-
-  .fab { position: fixed; bottom: 24px; right: 20px; width: 58px; height: 58px; border-radius: 50%; background: #1a1a18; color: #fff; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20; box-shadow: 0 4px 16px rgba(0,0,0,.18); transition: transform .15s; }
-  .fab:active { transform: scale(.93); }
-
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 30; align-items: flex-end; justify-content: center; }
-  .overlay.open { display: flex; }
-  .sheet { background: var(--card); border-radius: 20px 20px 0 0; padding: 12px 20px 36px; width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; }
-  .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 18px; }
-  .sheet h2 { font-size: 17px; font-weight: 600; margin-bottom: 18px; }
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
-  .field select, .field input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); appearance: none; -webkit-appearance: none; }
-  .field select:focus, .field input:focus { outline: none; border-color: #1a1a18; }
-  .err-msg { font-size: 12px; color: var(--danger); margin-top: 4px; display: none; }
-  .btn-save { width: 100%; padding: 15px; border: none; border-radius: 12px; background: #1a1a18; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: opacity .15s; }
-  .btn-save:active { opacity: .8; }
-
-  .tabs { display: flex; background: var(--card); border-bottom: 0.5px solid var(--border); padding: 0 16px; margin-bottom: 12px; }
-  .tab { padding: 12px 16px; font-size: 14px; font-weight: 500; color: var(--muted); border: none; background: none; border-bottom: 2px solid transparent; cursor: pointer; }
-  .tab.active { color: var(--text); border-bottom-color: #1a1a18; }
-
-  .hist-list { padding: 0 16px; }
-  .hist-item { background: var(--card); border-radius: 12px; border: 0.5px solid var(--border); padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .hist-left { flex: 1; }
-  .hist-cat { font-size: 14px; font-weight: 500; }
-  .hist-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .hist-right { display: flex; align-items: center; gap: 12px; }
-  .hist-val { font-size: 15px; font-weight: 600; }
-  .hist-del { font-size: 18px; color: var(--faint); cursor: pointer; padding: 4px; line-height: 1; }
-  .hist-del:active { color: var(--danger); }
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
-
-  .firebase-note { background: #fff8e6; border: 0.5px solid #f0d080; border-radius: 10px; margin: 0 16px 12px; padding: 10px 13px; font-size: 12px; color: #6b5200; line-height: 1.5; }
-  .firebase-note strong { display: block; margin-bottom: 2px; font-size: 13px; }
-
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #141413; --card: #1e1e1c; --border: #2e2e2b; --text: #f0ede8; --muted: #6b6a66; --faint: #444441; }
-    .field select, .field input { background: #141413; }
-    .firebase-note { background: #2a2200; border-color: #5a4400; color: #d4a800; }
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f3ef;color:#1a1a18}
+body{padding-bottom:90px}
+.header{background:#1a1a18;color:#fff;padding:16px 20px 12px;position:sticky;top:0;z-index:50}
+.header-row{display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:18px;font-weight:600;letter-spacing:-0.3px}
+.sync-dot{width:9px;height:9px;border-radius:50%;background:#639922;flex-shrink:0}
+.sync-dot.syncing{background:#BA7517;animation:pulse 1s infinite}
+.sync-dot.error{background:#E24B4A}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.cycle-bar{display:flex;gap:8px;margin-top:10px}
+.cycle-btn{flex:1;padding:7px 6px;border-radius:20px;border:1.5px solid #3a3a38;background:transparent;color:#888780;font-size:11px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
+.cycle-btn.active{background:#fff;color:#1a1a18;border-color:#fff}
+.cycle-sub{font-size:9px;color:#888780;padding:4px 20px 0;text-align:center}
+.tabs{display:flex;background:#fff;border-bottom:1px solid #e8e6e0}
+.tab{flex:1;padding:11px;font-size:13px;font-weight:500;color:#888780;border:none;background:none;border-bottom:2.5px solid transparent;cursor:pointer;transition:all .15s}
+.tab.active{color:#1a1a18;border-bottom-color:#1a1a18}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 14px 6px}
+.sum-card{background:#fff;border-radius:12px;border:.5px solid #e8e6e0;padding:11px 13px}
+.sum-label{font-size:10px;color:#888780;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:600}
+.sum-val{font-size:20px;font-weight:700;letter-spacing:-0.5px}
+.sum-val.ok{color:#27500A}
+.sum-val.warn{color:#633806}
+.sum-val.bad{color:#A32D2D}
+.section-label{font-size:10px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.8px;padding:8px 14px 4px}
+.cats{padding:0 14px;display:flex;flex-direction:column;gap:7px}
+.cat-card{background:#fff;border-radius:12px;border:.5px solid #e8e6e0;padding:11px 13px}
+.cat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.cat-left{display:flex;align-items:center;gap:8px}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cat-name{font-size:13px;font-weight:500}
+.cat-right{text-align:right}
+.cat-spent{font-size:14px;font-weight:700}
+.cat-teto{font-size:11px;color:#888780}
+.bar-bg{height:4px;border-radius:2px;background:#f4f3ef;overflow:hidden;margin-bottom:5px}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.cat-saldo{font-size:10px;color:#888780}
+.cat-saldo.over{color:#A32D2D;font-weight:600}
+.fab{position:fixed;bottom:24px;right:20px;width:60px;height:60px;border-radius:50%;background:#1a1a18;color:#fff;border:none;font-size:32px;line-height:60px;text-align:center;cursor:pointer;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:transform .15s;display:block}
+.fab:active{transform:scale(.92)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200}
+.overlay.open{display:block}
+.sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:#fff;border-radius:20px 20px 0 0;padding:14px 20px 44px;max-height:94vh;overflow-y:auto;z-index:201}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:#e8e6e0;margin:0 auto 16px}
+.sheet h2{font-size:16px;font-weight:600;margin-bottom:16px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;color:#888780;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.field select,.field input{width:100%;font-size:16px;padding:11px 13px;border:1.5px solid #e8e6e0;border-radius:10px;background:#f9f8f5;color:#1a1a18;appearance:none;-webkit-appearance:none;outline:none}
+.field select:focus,.field input:focus{border-color:#1a1a18}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{font-size:11px;color:#A32D2D;margin-top:3px;display:none}
+.btn-save{width:100%;padding:14px;border:none;border-radius:12px;background:#1a1a18;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px}
+.btn-save:active{opacity:.8}
+.hist-wrap{padding:0 14px}
+.hist-group-label{font-size:10px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.6px;padding:10px 0 5px}
+.hist-item{background:#fff;border-radius:11px;border:.5px solid #e8e6e0;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.hist-left{flex:1;min-width:0}
+.hist-cat{font-size:13px;font-weight:500}
+.hist-meta{font-size:11px;color:#888780;margin-top:2px}
+.hist-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:10px}
+.hist-val{font-size:14px;font-weight:600}
+.hist-del{font-size:22px;color:#ccc;cursor:pointer;line-height:1;padding:2px 4px}
+.empty{text-align:center;padding:40px 20px;color:#888780;font-size:14px}
+@media(prefers-color-scheme:dark){
+  body{background:#111110}
+  .header{background:#0d0d0c}
+  .tabs,.sum-card,.cat-card,.hist-item,.sheet{background:#1e1e1c}
+  .tabs{border-bottom-color:#2e2e2b}
+  .sum-card,.cat-card,.hist-item{border-color:#2e2e2b}
+  .field select,.field input{background:#141413;border-color:#2e2e2b;color:#f0ede8}
+  .bar-bg{background:#2e2e2b}
+  .section-label,.sum-label,.field label,.hist-meta,.cat-saldo,.cat-teto,.cycle-sub{color:#6b6a66}
+  .tab{color:#6b6a66}
+  .tab.active{color:#f0ede8}
+  .h1,.sum-val,.cat-name,.cat-spent,.hist-cat,.hist-val{color:#f0ede8}
+  .cycle-btn{border-color:#2e2e2b;color:#6b6a66}
+  .cycle-btn.active{background:#f0ede8;color:#1a1a18;border-color:#f0ede8}
+  .sheet-handle{background:#2e2e2b}
+  .hist-group-label{color:#6b6a66}
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-top">
-    <div>
-      <h1>Orçamento familiar</h1>
-      <div class="header-month" id="header-month"></div>
-    </div>
-    <div class="sync-dot" id="sync-dot" title="Status de sincronização"></div>
+  <div class="header-row">
+    <h1>Orçamento familiar</h1>
+    <div class="sync-dot" id="sync-dot"></div>
   </div>
+  <div class="cycle-bar">
+    <button class="cycle-btn" id="btn-thiago" onclick="setCycle('thiago')">Thiago<br><span style="font-size:9px;opacity:.7">dia 9 → 8</span></button>
+    <button class="cycle-btn" id="btn-taina"  onclick="setCycle('taina')">Tainá<br><span style="font-size:9px;opacity:.7">dia 3 → 2</span></button>
+    <button class="cycle-btn active" id="btn-familia" onclick="setCycle('familia')">Família<br><span style="font-size:9px;opacity:.7">visão geral</span></button>
+  </div>
+  <div class="cycle-sub" id="cycle-sub"></div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('tetos',this)">Tetos</button>
-  <button class="tab" onclick="switchTab('historico',this)">Histórico</button>
+  <button class="tab active" id="tab-tetos" onclick="switchTab('tetos',this)">Tetos</button>
+  <button class="tab" id="tab-historico" onclick="switchTab('historico',this)">Histórico</button>
 </div>
 
 <div id="view-tetos">
@@ -128,383 +117,374 @@
 </div>
 
 <div id="view-historico" style="display:none">
-  <div class="firebase-note">
-    <strong>Sincronização em tempo real</strong>
-    Configure o Firebase abaixo para que Thiago e Tainá vejam os mesmos dados. Sem isso, cada dispositivo salva localmente.
-  </div>
-  <div class="hist-list" id="hist-list"></div>
-  <div class="empty-state" id="hist-empty" style="display:none">Nenhum gasto registrado ainda.</div>
+  <div class="hist-wrap" id="hist-wrap"></div>
 </div>
 
-<button class="fab" onclick="openSheet()" aria-label="Adicionar gasto">+</button>
+<button class="fab" id="fab-btn">+</button>
 
-<div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
-  <div class="sheet">
+<div class="overlay" id="overlay">
+  <div class="sheet" id="sheet">
     <div class="sheet-handle"></div>
     <h2>Registrar gasto</h2>
     <div class="field">
       <label>Categoria</label>
       <select id="inp-cat"></select>
     </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="inp-val" placeholder="0,00" min="0.01" step="0.01" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="inp-date">
+      </div>
+    </div>
     <div class="field">
-      <label>Valor (R$)</label>
-      <input type="number" id="inp-val" placeholder="0,00" min="0.01" step="0.01" inputmode="decimal">
-      <div class="err-msg" id="err-val">Informe um valor maior que zero.</div>
+      <label>Quem pagou</label>
+      <select id="inp-pessoa">
+        <option value="thiago">Thiago</option>
+        <option value="taina">Tainá</option>
+        <option value="familia">Os dois / família</option>
+      </select>
     </div>
     <div class="field">
       <label>Descrição (opcional)</label>
       <input type="text" id="inp-desc" placeholder="Ex: Guanabara, iFood sábado…">
     </div>
-    <button class="btn-save" onclick="saveGasto()">Salvar gasto</button>
+    <div class="err" id="err-val">Informe um valor maior que zero.</div>
+    <button class="btn-save" id="btn-save">Salvar gasto</button>
   </div>
 </div>
 
 <script>
-const CATS = [
-  { id:'mercado',   name:'Mercado + Hortifruti', teto:2200, color:'#1D9E75', bg:'#E1F5EE', dark:'#085041' },
-  { id:'feira',     name:'Feira livre',           teto:700,  color:'#639922', bg:'#EAF3DE', dark:'#27500A' },
-  { id:'padaria',   name:'Padaria',               teto:300,  color:'#BA7517', bg:'#FAEEDA', dark:'#633806' },
-  { id:'ifood',     name:'iFood (fim de semana)', teto:400,  color:'#D85A30', bg:'#FAECE7', dark:'#712B13' },
-  { id:'comida_rua',name:'Comida na rua',          teto:800,  color:'#D4537E', bg:'#FBEAF0', dark:'#72243E' },
-  { id:'uber',      name:'Uber / 99',             teto:1000, color:'#378ADD', bg:'#E6F1FB', dark:'#0C447C' },
-  { id:'lazer',     name:'Lazer (exceto iFood)',  teto:500,  color:'#7F77DD', bg:'#EEEDFE', dark:'#3C3489' },
-  { id:'julia',     name:'Júlia',                 teto:800,  color:'#993556', bg:'#FBEAF0', dark:'#4B1528' },
-  { id:'outros',    name:'Outros',                teto:500,  color:'#888780', bg:'#F1EFE8', dark:'#444441' },
+var CATS = [
+  {id:'mercado',    name:'Mercado + Hortifruti', teto:2200, color:'#1D9E75', dark:'#085041'},
+  {id:'feira',      name:'Feira livre',           teto:700,  color:'#639922', dark:'#27500A'},
+  {id:'padaria',    name:'Padaria',               teto:300,  color:'#BA7517', dark:'#633806'},
+  {id:'ifood',      name:'iFood (fim de semana)', teto:400,  color:'#D85A30', dark:'#712B13'},
+  {id:'comida_rua', name:'Comida na rua',         teto:800,  color:'#D4537E', dark:'#72243E'},
+  {id:'uber',       name:'Uber / 99',             teto:1000, color:'#378ADD', dark:'#0C447C'},
+  {id:'lazer',      name:'Lazer (exceto iFood)',  teto:500,  color:'#7F77DD', dark:'#3C3489'},
+  {id:'julia',      name:'Júlia',                 teto:800,  color:'#993556', dark:'#4B1528'},
+  {id:'outros',     name:'Outros',                teto:500,  color:'#888780', dark:'#444441'},
+  {id:'parcelas',   name:'Compras parceladas',    teto:600,  color:'#1a6fbd', dark:'#0C447C'},
+  {id:'assinaturas',name:'Assinaturas',           teto:250,  color:'#5F5E5A', dark:'#2e2e2b'}
 ];
-const TETO_TOTAL = CATS.reduce((s,c)=>s+c.teto,0);
+var TETO_TOTAL = CATS.reduce(function(s,c){return s+c.teto;},0);
 
-function getMonthKey(){
-  const d=new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+var currentCycle = 'familia';
+var currentTab   = 'tetos';
+var gastos       = [];
+var db           = null;
+
+function getCycleRange(type) {
+  var hoje = new Date();
+  var ano  = hoje.getFullYear();
+  var mes  = hoje.getMonth();
+  var dia  = hoje.getDate();
+  var inicio, fim;
+  if (type === 'thiago') {
+    if (dia >= 9) {
+      inicio = new Date(ano, mes, 9);
+      fim    = new Date(ano, mes+1, 8);
+    } else {
+      inicio = new Date(ano, mes-1, 9);
+      fim    = new Date(ano, mes, 8);
+    }
+  } else if (type === 'taina') {
+    if (dia >= 3) {
+      inicio = new Date(ano, mes, 3);
+      fim    = new Date(ano, mes+1, 2);
+    } else {
+      inicio = new Date(ano, mes-1, 3);
+      fim    = new Date(ano, mes, 2);
+    }
+  } else {
+    if (dia >= 3) {
+      inicio = new Date(ano, mes, 3);
+      fim    = new Date(ano, mes+1, 8);
+    } else {
+      inicio = new Date(ano, mes-1, 3);
+      fim    = new Date(ano, mes, 8);
+    }
+  }
+  return {inicio:inicio, fim:fim};
 }
-function storageKey(){ return `orcamento_${getMonthKey()}`; }
 
-function fmtBRL(v){ return 'R$ '+Math.round(v).toLocaleString('pt-BR'); }
-function fmtBRLDec(v){ return 'R$ '+v.toFixed(2).replace('.',','); }
+function fmt2(n){return String(n).padStart(2,'0');}
+function fmtDate(d){return fmt2(d.getDate())+'/'+fmt2(d.getMonth()+1);}
 
-function loadLocal(){
-  try{ return JSON.parse(localStorage.getItem(storageKey())||'[]'); }catch{ return []; }
-}
-function saveLocal(list){
-  localStorage.setItem(storageKey(), JSON.stringify(list));
+function updateCycleSub() {
+  var r = getCycleRange(currentCycle);
+  document.getElementById('cycle-sub').textContent = fmtDate(r.inicio) + ' → ' + fmtDate(r.fim);
 }
 
-let gastos = loadLocal();
-let currentTab = 'tetos';
-
-function spentByCat(id){ return gastos.filter(g=>g.cat===id).reduce((s,g)=>s+g.val,0); }
-
-function render(){
-  const totalGasto = gastos.reduce((s,g)=>s+g.val,0);
-  const saldo = TETO_TOTAL - totalGasto;
-  const noLimite = CATS.filter(c=>spentByCat(c.id)>=c.teto).length;
-  const pctGasto = Math.min(100, Math.round(totalGasto/TETO_TOTAL*100));
-
-  const summaryEl = document.getElementById('summary');
-  summaryEl.innerHTML = `
-    <div class="sum-card">
-      <div class="sum-label">Gasto no mês</div>
-      <div class="sum-val ${totalGasto>TETO_TOTAL?'danger':totalGasto>TETO_TOTAL*.8?'warn':''}">${fmtBRL(totalGasto)}</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">Saldo disponível</div>
-      <div class="sum-val ${saldo<0?'danger':saldo<TETO_TOTAL*.2?'warn':'ok'}">${saldo<0?'-':''}${fmtBRL(Math.abs(saldo))}</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">Teto mensal</div>
-      <div class="sum-val">${fmtBRL(TETO_TOTAL)}</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">Categorias estouradas</div>
-      <div class="sum-val ${noLimite>0?'danger':''}">${noLimite}</div>
-    </div>`;
-
-  const catsEl = document.getElementById('cats');
-  catsEl.innerHTML = '';
-  CATS.forEach(c=>{
-    const spent = spentByCat(c.id);
-    const pct = Math.min(100, Math.round(spent/c.teto*100));
-    const over = spent > c.teto;
-    const saldoCat = c.teto - spent;
-    const div = document.createElement('div');
-    div.className = 'cat-card';
-    div.innerHTML = `
-      <div class="cat-row">
-        <div class="cat-dot-name">
-          <div class="cat-dot" style="background:${c.color}"></div>
-          <div class="cat-name">${c.name}</div>
-        </div>
-        <div class="cat-amounts">
-          <div class="cat-spent" style="color:${over?'#E24B4A':c.dark}">${fmtBRL(spent)}</div>
-          <div class="cat-teto">de ${fmtBRL(c.teto)}</div>
-        </div>
-      </div>
-      <div class="bar-bg">
-        <div class="bar-fill" style="width:${pct}%;background:${over?'#E24B4A':c.color}"></div>
-      </div>
-      <div class="cat-footer ${over?'over':''}">
-        ${over ? '⚠ Estourou '+fmtBRL(Math.abs(saldoCat)) : saldoCat>0 ? 'Saldo: '+fmtBRL(saldoCat)+' ('+pct+'% usado)' : 'No limite'}
-      </div>`;
-    catsEl.appendChild(div);
+function gastosAtivos() {
+  var r = getCycleRange(currentCycle);
+  return gastos.filter(function(g) {
+    var d = new Date(g.date + 'T12:00:00');
+    var ok_data = d >= r.inicio && d <= r.fim;
+    if (!ok_data) return false;
+    if (currentCycle === 'familia') return true;
+    return g.pessoa === currentCycle || g.pessoa === 'familia';
   });
-
-  renderHist();
 }
 
-function renderHist(){
-  const list = document.getElementById('hist-list');
-  const empty = document.getElementById('hist-empty');
-  if(!gastos.length){ list.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  const sorted = [...gastos].sort((a,b)=>b.ts-a.ts);
-  list.innerHTML = sorted.map(g=>{
-    const cat = CATS.find(c=>c.id===g.cat);
-    const idx = gastos.findIndex(x=>x.ts===g.ts&&x.cat===g.cat&&x.val===g.val);
-    const d = new Date(g.ts);
-    const dateStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    return `<div class="hist-item">
-      <div class="hist-left">
-        <div class="hist-cat">${cat?cat.name:'?'}</div>
-        <div class="hist-meta">${g.desc?g.desc+' · ':''} ${dateStr}</div>
-      </div>
-      <div class="hist-right">
-        <div class="hist-val">${fmtBRLDec(g.val)}</div>
-        <div class="hist-del" onclick="delGasto(${idx})" title="Remover">×</div>
-      </div>
-    </div>`;
-  }).join('');
+function spentByCat(id) {
+  return gastosAtivos().filter(function(g){return g.cat===id;}).reduce(function(s,g){return s+g.val;},0);
 }
 
-function delGasto(idx){
-  if(idx<0||idx>=gastos.length)return;
-  if(!confirm('Remover este gasto?'))return;
-  gastos.splice(idx,1);
-  saveLocal(gastos);
-  tryFirebaseSave();
+function fmtBRL(v) { return 'R$ ' + Math.round(Math.abs(v)).toLocaleString('pt-BR'); }
+function fmtDec(v) { return 'R$ ' + v.toFixed(2).replace('.',','); }
+
+function render() {
+  renderSummary();
+  renderCats();
+  if (currentTab === 'historico') renderHist();
+}
+
+function renderSummary() {
+  var lista = gastosAtivos();
+  var total = lista.reduce(function(s,g){return s+g.val;},0);
+  var saldo = TETO_TOTAL - total;
+  var over  = CATS.filter(function(c){return spentByCat(c.id)>=c.teto;}).length;
+  var classeGasto = total > TETO_TOTAL ? 'bad' : total > TETO_TOTAL*0.8 ? 'warn' : '';
+  var classeSaldo = saldo < 0 ? 'bad' : saldo < TETO_TOTAL*0.15 ? 'warn' : 'ok';
+  document.getElementById('summary').innerHTML =
+    '<div class="sum-card"><div class="sum-label">Gasto no ciclo</div><div class="sum-val '+classeGasto+'">'+fmtBRL(total)+'</div></div>' +
+    '<div class="sum-card"><div class="sum-label">Saldo disponível</div><div class="sum-val '+classeSaldo+'">'+(saldo<0?'- ':'')+fmtBRL(saldo)+'</div></div>' +
+    '<div class="sum-card"><div class="sum-label">Teto total</div><div class="sum-val">'+fmtBRL(TETO_TOTAL)+'</div></div>' +
+    '<div class="sum-card"><div class="sum-label">Estouradas</div><div class="sum-val '+(over>0?'bad':'')+'">'+over+'</div></div>';
+}
+
+function renderCats() {
+  var el = document.getElementById('cats');
+  el.innerHTML = '';
+  CATS.forEach(function(c) {
+    var spent = spentByCat(c.id);
+    var pct   = Math.min(100, Math.round(spent/c.teto*100));
+    var over  = spent > c.teto;
+    var saldo = c.teto - spent;
+    var saldoTxt = over
+      ? '⚠ Estourou ' + fmtBRL(Math.abs(saldo))
+      : saldo > 0 ? 'Saldo: '+fmtBRL(saldo)+' ('+pct+'% usado)' : 'No limite';
+    var div = document.createElement('div');
+    div.className = 'cat-card';
+    div.innerHTML =
+      '<div class="cat-row">' +
+        '<div class="cat-left"><div class="cat-dot" style="background:'+c.color+'"></div><div class="cat-name">'+c.name+'</div></div>' +
+        '<div class="cat-right"><div class="cat-spent" style="color:'+(over?'#A32D2D':c.dark)+'">'+fmtBRL(spent)+'</div><div class="cat-teto">de '+fmtBRL(c.teto)+'</div></div>' +
+      '</div>' +
+      '<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+(over?'#A32D2D':c.color)+'"></div></div>' +
+      '<div class="cat-saldo'+(over?' over':'')+'">'+saldoTxt+'</div>';
+    el.appendChild(div);
+  });
+}
+
+function renderHist() {
+  var wrap = document.getElementById('hist-wrap');
+  var lista = gastosAtivos().slice().sort(function(a,b){
+    return b.date.localeCompare(a.date) || b.ts - a.ts;
+  });
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="empty">Nenhum gasto registrado neste ciclo.</div>';
+    return;
+  }
+  var grupos = {};
+  lista.forEach(function(g){
+    if (!grupos[g.date]) grupos[g.date] = [];
+    grupos[g.date].push(g);
+  });
+  wrap.innerHTML = '';
+  Object.keys(grupos).sort(function(a,b){return b.localeCompare(a);}).forEach(function(date) {
+    var d = new Date(date+'T12:00:00');
+    var label = d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+    label = label.charAt(0).toUpperCase()+label.slice(1);
+    var gl = document.createElement('div');
+    gl.className = 'hist-group-label';
+    gl.textContent = label;
+    wrap.appendChild(gl);
+    grupos[date].forEach(function(g) {
+      var cat = CATS.find(function(c){return c.id===g.cat;});
+      var item = document.createElement('div');
+      item.className = 'hist-item';
+      var meta = [];
+      if (g.desc) meta.push(g.desc);
+      if (g.pessoa && g.pessoa !== 'familia') meta.push(g.pessoa.charAt(0).toUpperCase()+g.pessoa.slice(1));
+      item.innerHTML =
+        '<div class="hist-left">' +
+          '<div class="hist-cat">'+(cat?cat.name:'?')+'</div>' +
+          (meta.length ? '<div class="hist-meta">'+meta.join(' · ')+'</div>' : '') +
+        '</div>' +
+        '<div class="hist-right">' +
+          '<div class="hist-val">'+fmtDec(g.val)+'</div>' +
+          '<div class="hist-del" data-ts="'+g.ts+'">×</div>' +
+        '</div>';
+      item.querySelector('.hist-del').addEventListener('click', function(){
+        delGasto(parseInt(this.getAttribute('data-ts')));
+      });
+      wrap.appendChild(item);
+    });
+  });
+}
+
+function setCycle(type) {
+  currentCycle = type;
+  ['thiago','taina','familia'].forEach(function(t){
+    document.getElementById('btn-'+t).classList.toggle('active', t===type);
+  });
+  updateCycleSub();
   render();
 }
 
-function openSheet(){
-  document.getElementById('overlay').classList.add('open');
-  document.getElementById('inp-val').value='';
-  document.getElementById('inp-desc').value='';
-  document.getElementById('err-val').style.display='none';
-  setTimeout(()=>document.getElementById('inp-val').focus(),200);
-}
-function closeSheet(){ document.getElementById('overlay').classList.remove('open'); }
-
-function saveGasto(){
-  const val = parseFloat(document.getElementById('inp-val').value);
-  const errEl = document.getElementById('err-val');
-  if(!val||val<=0){ errEl.style.display='block'; return; }
-  errEl.style.display='none';
-  const cat = document.getElementById('inp-cat').value;
-  const desc = document.getElementById('inp-desc').value.trim();
-  gastos.push({cat,val,desc,ts:Date.now()});
-  saveLocal(gastos);
-  tryFirebaseSave();
-  closeSheet();
-  render();
-}
-
-function switchTab(tab, el){
+function switchTab(tab, el) {
   currentTab = tab;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   el.classList.add('active');
-  document.getElementById('view-tetos').style.display = tab==='tetos'?'block':'none';
-  document.getElementById('view-historico').style.display = tab==='historico'?'block':'none';
+  document.getElementById('view-tetos').style.display     = tab==='tetos'?'block':'none';
+  document.getElementById('view-historico').style.display  = tab==='historico'?'block':'none';
+  if (tab==='historico') renderHist();
 }
 
-function setHeaderMonth(){
-  const d = new Date();
-  const mes = d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  document.getElementById('header-month').textContent = mes.charAt(0).toUpperCase()+mes.slice(1);
+function openModal() {
+  var hoje = new Date();
+  var iso  = hoje.getFullYear()+'-'+fmt2(hoje.getMonth()+1)+'-'+fmt2(hoje.getDate());
+  document.getElementById('inp-date').value  = iso;
+  document.getElementById('inp-val').value   = '';
+  document.getElementById('inp-desc').value  = '';
+  document.getElementById('err-val').style.display = 'none';
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('inp-val').focus(); }, 300);
 }
 
-function populateSelect(){
-  const sel = document.getElementById('inp-cat');
-  CATS.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; sel.appendChild(o); });
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
 }
 
-/* ── Firebase (opcional — preencha as variáveis abaixo) ── */
-const FB_CONFIG = {
-  apiKey:            // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
-  authDomain: "orcamento-familia-b9681.firebaseapp.com",
-  databaseURL: "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
-  projectId: "orcamento-familia-b9681",
-  storageBucket: "orcamento-familia-b9681.firebasestorage.app",
-  messagingSenderId: "945768398506",
-  appId: "1:945768398506:web:9bce437bbbd724b2799ad3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);,
-  authDomain:        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
-  authDomain: "orcamento-familia-b9681.firebaseapp.com",
-  databaseURL: "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
-  projectId: "orcamento-familia-b9681",
-  storageBucket: "orcamento-familia-b9681.firebasestorage.app",
-  messagingSenderId: "945768398506",
-  appId: "1:945768398506:web:9bce437bbbd724b2799ad3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);,
-  databaseURL:       "// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
-  authDomain: "orcamento-familia-b9681.firebaseapp.com",
-  databaseURL: "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
-  projectId: "orcamento-familia-b9681",
-  storageBucket: "orcamento-familia-b9681.firebasestorage.app",
-  messagingSenderId: "945768398506",
-  appId: "1:945768398506:web:9bce437bbbd724b2799ad3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);",
-  projectId:         "// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
-  authDomain: "orcamento-familia-b9681.firebaseapp.com",
-  databaseURL: "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
-  projectId: "orcamento-familia-b9681",
-  storageBucket: "orcamento-familia-b9681.firebasestorage.app",
-  messagingSenderId: "945768398506",
-  appId: "1:945768398506:web:9bce437bbbd724b2799ad3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);",
-  storageBucket:     // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
-  authDomain: "orcamento-familia-b9681.firebaseapp.com",
-  databaseURL: "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
-  projectId: "orcamento-familia-b9681",
-  storageBucket: "orcamento-familia-b9681.firebasestorage.app",
-  messagingSenderId: "945768398506",
-  appId: "1:945768398506:web:9bce437bbbd724b2799ad3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);,
-  messagingSenderId: // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
-  authDomain: "orcamento-familia-b9681.firebaseapp.com",
-  databaseURL: "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
-  projectId: "orcamento-familia-b9681",
-  storageBucket: "orcamento-familia-b9681.firebasestorage.app",
-  messagingSenderId: "945768398506",
-  appId: "1:945768398506:web:9bce437bbbd724b2799ad3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);,
-  appId:             // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
-  authDomain: "orcamento-familia-b9681.firebaseapp.com",
-  databaseURL: "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
-  projectId: "orcamento-familia-b9681",
-  storageBucket: "orcamento-familia-b9681.firebasestorage.app",
-  messagingSenderId: "945768398506",
-  appId: "1:945768398506:web:9bce437bbbd724b2799ad3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-};
-const FB_CONFIGURED = !Object.values(FB_CONFIG).some(v=>v==="COLE_AQUI");
-let db = null;
-
-function setSyncDot(state){
-  const dot = document.getElementById('sync-dot');
-  dot.className = 'sync-dot'+(state?' '+state:'');
+function saveGasto() {
+  var val = parseFloat(document.getElementById('inp-val').value);
+  if (!val || val <= 0) {
+    document.getElementById('err-val').style.display = 'block';
+    return;
+  }
+  document.getElementById('err-val').style.display = 'none';
+  var g = {
+    ts:     Date.now(),
+    cat:    document.getElementById('inp-cat').value,
+    val:    val,
+    date:   document.getElementById('inp-date').value,
+    pessoa: document.getElementById('inp-pessoa').value,
+    desc:   document.getElementById('inp-desc').value.trim()
+  };
+  gastos.push(g);
+  saveLocal();
+  fbSave();
+  closeModal();
+  render();
 }
 
-function tryFirebaseSave(){
-  if(!db){ setSyncDot(''); return; }
+function delGasto(ts) {
+  if (!confirm('Remover este gasto?')) return;
+  gastos = gastos.filter(function(g){return g.ts!==ts;});
+  saveLocal();
+  fbSave();
+  render();
+}
+
+function saveLocal() {
+  try { localStorage.setItem('orcfam_v2', JSON.stringify(gastos)); } catch(e){}
+}
+
+function loadLocal() {
+  try { return JSON.parse(localStorage.getItem('orcfam_v2')||'[]'); } catch(e){ return []; }
+}
+
+function setSyncDot(state) {
+  var d = document.getElementById('sync-dot');
+  d.className = 'sync-dot'+(state?' '+state:'');
+}
+
+function fbSave() {
+  if (!db) return;
   setSyncDot('syncing');
-  const ref = db.ref('gastos/'+getMonthKey());
-  ref.set(gastos).then(()=>setSyncDot('')).catch(()=>setSyncDot('error'));
+  db.ref('gastos_v2').set(gastos)
+    .then(function(){setSyncDot('');})
+    .catch(function(){setSyncDot('error');});
 }
 
-function initFirebase(){
-  if(!FB_CONFIGURED){ setSyncDot(''); return; }
-  const script = document.createElement('script');
-  script.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
-  script.onload = ()=>{
-    const s2 = document.createElement('script');
+var FB_CONFIG = {
+  apiKey:            "AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
+  authDomain:        "orcamento-familia-b9681.firebaseapp.com",
+  databaseURL:       "https://orcamento-familia-b9681-default-rtdb.firebaseio.com",
+  projectId:         "orcamento-familia-b9681",
+  storageBucket:     "orcamento-familia-b9681.firebasestorage.app",
+  messagingSenderId: "945768398506",
+  appId:             "1:945768398506:web:9bce437bbbd724b2799ad3"
+};
+
+function initFirebase() {
+  var s1 = document.createElement('script');
+  s1.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+  s1.onload = function() {
+    var s2 = document.createElement('script');
     s2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
-    s2.onload = ()=>{
-      try{
+    s2.onload = function() {
+      try {
         firebase.initializeApp(FB_CONFIG);
         db = firebase.database();
         setSyncDot('syncing');
-        db.ref('gastos/'+getMonthKey()).on('value', snap=>{
-          const remote = snap.val();
-          if(remote && Array.isArray(remote)){
-            if(remote.length >= gastos.length){
-              gastos = remote;
-              saveLocal(gastos);
-              render();
-            }
+        db.ref('gastos_v2').on('value', function(snap) {
+          var remote = snap.val();
+          if (Array.isArray(remote) && remote.length > 0) {
+            var tsLocais = {};
+            gastos.forEach(function(g){ tsLocais[g.ts] = true; });
+            remote.forEach(function(g){ if (!tsLocais[g.ts]) gastos.push(g); });
+            var tsRemotos = {};
+            remote.forEach(function(g){ tsRemotos[g.ts] = true; });
+            var temNovos = gastos.some(function(g){ return !tsRemotos[g.ts]; });
+            if (temNovos) db.ref('gastos_v2').set(gastos);
+            saveLocal();
+            render();
+          } else if (!remote && gastos.length > 0) {
+            db.ref('gastos_v2').set(gastos);
           }
           setSyncDot('');
         });
-      }catch(e){ setSyncDot('error'); }
+      } catch(e) {
+        setSyncDot('error');
+      }
     };
+    s2.onerror = function(){ setSyncDot('error'); };
     document.head.appendChild(s2);
   };
-  document.head.appendChild(script);
+  s1.onerror = function(){ setSyncDot('error'); };
+  document.head.appendChild(s1);
 }
 
-setHeaderMonth();
+function populateSelect() {
+  var sel = document.getElementById('inp-cat');
+  CATS.forEach(function(c){
+    var o = document.createElement('option');
+    o.value = c.id;
+    o.textContent = c.name;
+    sel.appendChild(o);
+  });
+}
+
+// INIT
+gastos = loadLocal();
 populateSelect();
+updateCycleSub();
 render();
+
+document.getElementById('fab-btn').addEventListener('click', function(){ openModal(); });
+document.getElementById('btn-save').addEventListener('click', function(){ saveGasto(); });
+document.getElementById('overlay').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+
 initFirebase();
 </script>
-
 </body>
 </html>
