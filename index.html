@@ -145,8 +145,8 @@ body{padding-bottom:90px}
     <div class="sync-dot" id="sdot"></div>
   </div>
   <div class="cycle-bar">
-    <button class="cycle-btn" id="btn-thiago" onclick="setCycle('thiago')">Thiago<br><small>dia 9→8</small></button>
-    <button class="cycle-btn" id="btn-taina"  onclick="setCycle('taina')">Tainá<br><small>dia 3→2</small></button>
+    <button class="cycle-btn" id="btn-thiago" onclick="setCycle('thiago')">Thiago<br><small id="days-thiago">dia 9→8</small></button>
+    <button class="cycle-btn" id="btn-taina"  onclick="setCycle('taina')">Tainá<br><small id="days-taina">dia 3→2</small></button>
     <button class="cycle-btn active" id="btn-familia" onclick="setCycle('familia')">Família<br><small>geral</small></button>
   </div>
   <div class="cycle-sub" id="cycle-sub"></div>
@@ -259,7 +259,36 @@ function range(t){
   else{i=d>=3?new Date(a,m,3):new Date(a,m-1,3);f=d>=3?new Date(a,m+1,8):new Date(a,m,8);}
   return{i:i,f:f};
 }
-function subLabel(){var r=range(cycle);document.getElementById('cycle-sub').textContent=fD(r.i)+' → '+fD(r.f);}
+function diasRestantes(fechaDia){
+  var hoje=new Date();
+  var ano=hoje.getFullYear(),mes=hoje.getMonth(),dia=hoje.getDate();
+  // data de fechamento deste ciclo
+  var fech;
+  if(dia<fechaDia){
+    fech=new Date(ano,mes,fechaDia);
+  }else{
+    fech=new Date(ano,mes+1,fechaDia);
+  }
+  var diff=Math.ceil((fech-hoje)/(1000*60*60*24));
+  return diff;
+}
+function updateDaysLabel(){
+  var dT=diasRestantes(8);
+  var dN=diasRestantes(2);
+  var elT=document.getElementById('days-thiago');
+  var elN=document.getElementById('days-taina');
+  if(elT){
+    if(dT===0) elT.textContent='fecha hoje!';
+    else if(dT===1) elT.textContent='fecha amanhã';
+    else elT.textContent='fecha em '+dT+' dias';
+  }
+  if(elN){
+    if(dN===0) elN.textContent='fecha hoje!';
+    else if(dN===1) elN.textContent='fecha amanhã';
+    else elN.textContent='fecha em '+dN+' dias';
+  }
+}
+function subLabel(){var r=range(cycle);document.getElementById('cycle-sub').textContent=fD(r.i)+' → '+fD(r.f);updateDaysLabel();}
 
 function filtG(){
   var r=range(cycle);
@@ -607,7 +636,7 @@ function populateCat(){
 }
 
 // INIT
-loadAll();populateCat();subLabel();render();
+loadAll();populateCat();subLabel();updateDaysLabel();render();
 document.getElementById('fab').addEventListener('click',openModal);
 document.getElementById('cp-close').addEventListener('click',closeCatPanel);
 document.getElementById('cat-panel').addEventListener('click',function(e){if(e.target===this)closeCatPanel();});
