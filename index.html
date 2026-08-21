@@ -11,8 +11,6 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f3ef;color:#1a1a18}
 body{padding-bottom:90px}
-
-/* HEADER */
 .header{background:#1a1a18;color:#fff;padding:16px 20px 12px;position:sticky;top:0;z-index:50}
 .header-row{display:flex;justify-content:space-between;align-items:center}
 .header h1{font-size:18px;font-weight:600;letter-spacing:-0.3px}
@@ -24,13 +22,9 @@ body{padding-bottom:90px}
 .cycle-btn{flex:1;padding:7px 6px;border-radius:20px;border:1.5px solid #3a3a38;background:transparent;color:#888780;font-size:11px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
 .cycle-btn.active{background:#fff;color:#1a1a18;border-color:#fff}
 .cycle-sub{font-size:9px;color:#888780;padding:4px 20px 0;text-align:center}
-
-/* TABS */
 .tabs{display:flex;background:#fff;border-bottom:1px solid #e8e6e0}
 .tab{flex:1;padding:11px;font-size:13px;font-weight:500;color:#888780;border:none;background:none;border-bottom:2.5px solid transparent;cursor:pointer;transition:all .15s}
 .tab.active{color:#1a1a18;border-bottom-color:#1a1a18}
-
-/* SUMMARY */
 .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 14px 6px}
 .sum-card{background:#fff;border-radius:12px;border:.5px solid #e8e6e0;padding:11px 13px}
 .sum-label{font-size:10px;color:#888780;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:600}
@@ -38,8 +32,6 @@ body{padding-bottom:90px}
 .sum-val.ok{color:#27500A}
 .sum-val.warn{color:#633806}
 .sum-val.bad{color:#A32D2D}
-
-/* CATS */
 .section-label{font-size:10px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.8px;padding:8px 14px 4px}
 .cats{padding:0 14px;display:flex;flex-direction:column;gap:7px}
 .cat-card{background:#fff;border-radius:12px;border:.5px solid #e8e6e0;padding:11px 13px}
@@ -54,17 +46,11 @@ body{padding-bottom:90px}
 .bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
 .cat-saldo{font-size:10px;color:#888780}
 .cat-saldo.over{color:#A32D2D;font-weight:600}
-
-/* COMPROMISSO FUTURO */
 .futuro-banner{margin:6px 14px 0;background:#E6F1FB;border:.5px solid #b8d4f0;border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center}
 .futuro-label{font-size:11px;color:#0C447C;font-weight:500}
 .futuro-val{font-size:14px;font-weight:700;color:#0C447C}
-
-/* FAB */
 .fab{position:fixed;bottom:24px;right:20px;width:60px;height:60px;border-radius:50%;background:#1a1a18;color:#fff;border:none;font-size:32px;line-height:60px;text-align:center;cursor:pointer;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:transform .15s;display:block}
 .fab:active{transform:scale(.92)}
-
-/* OVERLAY */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200}
 .overlay.open{display:block}
 .sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:#fff;border-radius:20px 20px 0 0;padding:14px 20px 44px;max-height:94vh;overflow-y:auto;z-index:201}
@@ -75,15 +61,12 @@ body{padding-bottom:90px}
 .field select,.field input{width:100%;font-size:16px;padding:11px 13px;border:1.5px solid #e8e6e0;border-radius:10px;background:#f9f8f5;color:#1a1a18;appearance:none;-webkit-appearance:none;outline:none}
 .field select:focus,.field input:focus{border-color:#1a1a18}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .err{font-size:11px;color:#A32D2D;margin-top:3px;display:none}
 .btn-save{width:100%;padding:14px;border:none;border-radius:12px;background:#1a1a18;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px}
 .btn-save:active{opacity:.8}
 .tipo-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
 .tipo-btn{padding:10px;border-radius:10px;border:1.5px solid #e8e6e0;background:#f9f8f5;color:#888780;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
 .tipo-btn.active{border-color:#1a1a18;background:#1a1a18;color:#fff}
-
-/* HISTÓRICO */
 .hist-wrap{padding:0 14px}
 .hist-group-label{font-size:10px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.6px;padding:10px 0 5px}
 .hist-item{background:#fff;border-radius:11px;border:.5px solid #e8e6e0;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -94,8 +77,6 @@ body{padding-bottom:90px}
 .hist-val{font-size:14px;font-weight:600}
 .hist-del{font-size:22px;color:#ccc;cursor:pointer;line-height:1;padding:2px 4px}
 .hist-del:active{color:#A32D2D}
-
-/* PARCELAS */
 .parcelas-wrap{padding:0 14px}
 .parc-total-card{background:#1a1a18;color:#fff;border-radius:12px;padding:13px 15px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
 .parc-total-label{font-size:11px;color:#888780}
@@ -116,10 +97,8 @@ body{padding-bottom:90px}
 .parc-del{font-size:18px;color:#ddd;cursor:pointer;padding:2px 4px}
 .parc-del:active{color:#A32D2D}
 .parc-vence{font-size:11px;color:#1a6fbd;font-weight:500}
-
+.migrado-banner{margin:0 14px 10px;background:#EAF3DE;border:.5px solid #a0c878;border-radius:10px;padding:9px 12px;font-size:12px;color:#27500A}
 .empty{text-align:center;padding:40px 20px;color:#888780;font-size:14px}
-
-/* DARK */
 @media(prefers-color-scheme:dark){
   body{background:#111110}
   .header{background:#0d0d0c}
@@ -138,6 +117,7 @@ body{padding-bottom:90px}
   .sheet-handle{background:#2e2e2b}
   .futuro-banner{background:#0d2540;border-color:#1a4070}
   .parc-total-card{background:#0d0d0c}
+  .migrado-banner{background:#1a2e0d;border-color:#3a6020;color:#8dc85a}
 }
 </style>
 </head>
@@ -162,7 +142,6 @@ body{padding-bottom:90px}
   <button class="tab"        id="tab-parcelas"  onclick="switchTab('parcelas',this)">Parcelas</button>
 </div>
 
-<!-- TETOS -->
 <div id="view-tetos">
   <div class="summary" id="summary"></div>
   <div id="futuro-banner-wrap"></div>
@@ -170,17 +149,16 @@ body{padding-bottom:90px}
   <div class="cats" id="cats"></div>
 </div>
 
-<!-- HISTÓRICO -->
 <div id="view-historico" style="display:none">
   <div class="hist-wrap" id="hist-wrap"></div>
 </div>
 
-<!-- PARCELAS -->
 <div id="view-parcelas" style="display:none">
   <div class="parcelas-wrap">
     <div style="padding:14px 0 6px">
       <div class="parc-total-card" id="parc-total-card"></div>
     </div>
+    <div id="migrado-aviso"></div>
     <div class="section-label">Compras parceladas ativas</div>
     <div id="parc-list"></div>
   </div>
@@ -188,19 +166,14 @@ body{padding-bottom:90px}
 
 <button class="fab" id="fab-btn">+</button>
 
-<!-- MODAL UNIFICADO -->
 <div class="overlay" id="overlay">
   <div class="sheet" id="sheet">
     <div class="sheet-handle"></div>
     <h2 id="sheet-title">Registrar gasto</h2>
-
-    <!-- tipo -->
     <div class="tipo-row">
       <button class="tipo-btn active" id="tipo-avulso" onclick="setTipo('avulso')">Gasto avulso</button>
       <button class="tipo-btn"        id="tipo-parc"   onclick="setTipo('parcelado')">Compra parcelada</button>
     </div>
-
-    <!-- campos comuns -->
     <div class="field">
       <label>Categoria</label>
       <select id="inp-cat"></select>
@@ -217,8 +190,6 @@ body{padding-bottom:90px}
         <option value="familia">Os dois / família</option>
       </select>
     </div>
-
-    <!-- campos AVULSO -->
     <div id="campos-avulso">
       <div class="field-row">
         <div class="field">
@@ -231,8 +202,6 @@ body{padding-bottom:90px}
         </div>
       </div>
     </div>
-
-    <!-- campos PARCELADO -->
     <div id="campos-parc" style="display:none">
       <div class="field-row">
         <div class="field">
@@ -252,144 +221,102 @@ body{padding-bottom:90px}
         Parcela mensal: <strong id="preview-val">—</strong> · Término: <strong id="preview-fim">—</strong>
       </div>
     </div>
-
     <div class="err" id="err-val">Preencha todos os campos corretamente.</div>
     <button class="btn-save" id="btn-save">Salvar</button>
   </div>
 </div>
 
 <script>
-var CATS = [
-  {id:'mercado',    name:'Mercado + Hortifruti', teto:2200, color:'#1D9E75', dark:'#085041'},
-  {id:'feira',      name:'Feira livre',           teto:700,  color:'#639922', dark:'#27500A'},
-  {id:'padaria',    name:'Padaria',               teto:300,  color:'#BA7517', dark:'#633806'},
-  {id:'ifood',      name:'iFood (fim de semana)', teto:400,  color:'#D85A30', dark:'#712B13'},
-  {id:'comida_rua', name:'Comida na rua',         teto:800,  color:'#D4537E', dark:'#72243E'},
-  {id:'uber',       name:'Uber / 99',             teto:1000, color:'#378ADD', dark:'#0C447C'},
-  {id:'lazer',      name:'Lazer (exceto iFood)',  teto:500,  color:'#7F77DD', dark:'#3C3489'},
-  {id:'julia',      name:'Júlia',                 teto:800,  color:'#993556', dark:'#4B1528'},
-  {id:'outros',     name:'Outros',                teto:500,  color:'#888780', dark:'#444441'},
-  {id:'parcelas',   name:'Compras parceladas',    teto:600,  color:'#1a6fbd', dark:'#0C447C'},
-  {id:'assinaturas',name:'Assinaturas',           teto:250,  color:'#5F5E5A', dark:'#2e2e2b'}
+var CATS=[
+  {id:'mercado',    name:'Mercado + Hortifruti',teto:2200,color:'#1D9E75',dark:'#085041'},
+  {id:'feira',      name:'Feira livre',          teto:700, color:'#639922',dark:'#27500A'},
+  {id:'padaria',    name:'Padaria',              teto:300, color:'#BA7517',dark:'#633806'},
+  {id:'ifood',      name:'iFood (fim de semana)',teto:400, color:'#D85A30',dark:'#712B13'},
+  {id:'comida_rua', name:'Comida na rua',        teto:800, color:'#D4537E',dark:'#72243E'},
+  {id:'uber',       name:'Uber / 99',            teto:1000,color:'#378ADD',dark:'#0C447C'},
+  {id:'lazer',      name:'Lazer (exceto iFood)', teto:500, color:'#7F77DD',dark:'#3C3489'},
+  {id:'julia',      name:'Júlia',                teto:800, color:'#993556',dark:'#4B1528'},
+  {id:'outros',     name:'Outros',               teto:500, color:'#888780',dark:'#444441'},
+  {id:'parcelas',   name:'Compras parceladas',   teto:600, color:'#1a6fbd',dark:'#0C447C'},
+  {id:'assinaturas',name:'Assinaturas',          teto:250, color:'#5F5E5A',dark:'#2e2e2b'}
 ];
-var TETO_TOTAL = CATS.reduce(function(s,c){return s+c.teto;},0);
+var TETO_TOTAL=CATS.reduce(function(s,c){return s+c.teto;},0);
 
-var currentCycle = 'familia';
-var currentTab   = 'tetos';
-var tipoAtual    = 'avulso';
-var gastos       = [];   // gastos avulsos
-var parcelas     = [];   // compras parceladas
-var db           = null;
+var currentCycle='familia', currentTab='tetos', tipoAtual='avulso';
+var gastos=[], parcelas=[], db=null, migradoCount=0;
 
-// ── CICLOS ─────────────────────────────────────────────
-function getCycleRange(type) {
-  var hoje = new Date();
-  var ano=hoje.getFullYear(), mes=hoje.getMonth(), dia=hoje.getDate();
-  var inicio, fim;
-  if (type==='thiago') {
-    inicio = dia>=9 ? new Date(ano,mes,9)   : new Date(ano,mes-1,9);
-    fim    = dia>=9 ? new Date(ano,mes+1,8) : new Date(ano,mes,8);
-  } else if (type==='taina') {
-    inicio = dia>=3 ? new Date(ano,mes,3)   : new Date(ano,mes-1,3);
-    fim    = dia>=3 ? new Date(ano,mes+1,2) : new Date(ano,mes,2);
-  } else {
-    inicio = dia>=3 ? new Date(ano,mes,3)   : new Date(ano,mes-1,3);
-    fim    = dia>=3 ? new Date(ano,mes+1,8) : new Date(ano,mes,8);
+// ── CICLOS ────────────────────────────────────────────
+function getCycleRange(type){
+  var h=new Date(),ano=h.getFullYear(),mes=h.getMonth(),dia=h.getDate();
+  var i,f;
+  if(type==='thiago'){
+    i=dia>=9?new Date(ano,mes,9):new Date(ano,mes-1,9);
+    f=dia>=9?new Date(ano,mes+1,8):new Date(ano,mes,8);
+  }else if(type==='taina'){
+    i=dia>=3?new Date(ano,mes,3):new Date(ano,mes-1,3);
+    f=dia>=3?new Date(ano,mes+1,2):new Date(ano,mes,2);
+  }else{
+    i=dia>=3?new Date(ano,mes,3):new Date(ano,mes-1,3);
+    f=dia>=3?new Date(ano,mes+1,8):new Date(ano,mes,8);
   }
-  return {inicio:inicio, fim:fim};
+  return{inicio:i,fim:f};
 }
-
 function fmt2(n){return String(n).padStart(2,'0');}
 function fmtDate(d){return fmt2(d.getDate())+'/'+fmt2(d.getMonth()+1);}
 function fmtBRL(v){return 'R$ '+Math.round(Math.abs(v)).toLocaleString('pt-BR');}
 function fmtDec(v){return 'R$ '+Number(v).toFixed(2).replace('.',',');}
 function todayISO(){var h=new Date();return h.getFullYear()+'-'+fmt2(h.getMonth()+1)+'-'+fmt2(h.getDate());}
+function updateCycleSub(){var r=getCycleRange(currentCycle);document.getElementById('cycle-sub').textContent=fmtDate(r.inicio)+' → '+fmtDate(r.fim);}
 
-function updateCycleSub() {
-  var r=getCycleRange(currentCycle);
-  document.getElementById('cycle-sub').textContent=fmtDate(r.inicio)+' → '+fmtDate(r.fim);
-}
-
-// ── GASTOS ATIVOS NO CICLO ─────────────────────────────
-function gastosAtivos() {
+// ── FILTROS ───────────────────────────────────────────
+function gastosAtivos(){
   var r=getCycleRange(currentCycle);
   return gastos.filter(function(g){
     var d=new Date(g.date+'T12:00:00');
-    if (d<r.inicio||d>r.fim) return false;
-    if (currentCycle==='familia') return true;
+    if(d<r.inicio||d>r.fim)return false;
+    if(currentCycle==='familia')return true;
     return g.pessoa===currentCycle||g.pessoa==='familia';
   });
 }
-
-// ── PARCELAS ATIVAS NO CICLO ───────────────────────────
-// Cada compra parcelada gera uma "parcela vigente" por ciclo
-function parcelasVigentes() {
-  var r=getCycleRange(currentCycle);
-  var vigentes=[];
+function parcelasVigentes(){
+  var r=getCycleRange(currentCycle),vig=[];
   parcelas.forEach(function(p){
-    // gerar todas as datas de vencimento
     var base=new Date(p.startDate+'T12:00:00');
-    for (var i=0;i<p.nparc;i++){
-      var venc=new Date(base.getFullYear(), base.getMonth()+i, base.getDate());
-      if (venc>=r.inicio && venc<=r.fim){
-        if (currentCycle==='familia'||p.pessoa===currentCycle||p.pessoa==='familia'){
-          vigentes.push({
-            parcelamento: p,
-            parcela: i+1,
-            venc: venc
-          });
+    for(var i=0;i<p.nparc;i++){
+      var venc=new Date(base.getFullYear(),base.getMonth()+i,base.getDate());
+      if(venc>=r.inicio&&venc<=r.fim){
+        if(currentCycle==='familia'||p.pessoa===currentCycle||p.pessoa==='familia'){
+          vig.push({parcelamento:p,parcela:i+1,venc:venc});
         }
       }
     }
   });
-  return vigentes;
+  return vig;
 }
-
-function totalParcelasVigentes(){
-  return parcelasVigentes().reduce(function(s,v){return s+v.parcelamento.valorParcela;},0);
-}
-
-// compromisso futuro = parcelas que vencem APÓS o ciclo atual
+function totalParcelasVig(){return parcelasVigentes().reduce(function(s,v){return s+v.parcelamento.valorParcela;},0);}
 function comprometimentoFuturo(){
-  var r=getCycleRange(currentCycle);
-  var total=0;
+  var r=getCycleRange(currentCycle),total=0;
   parcelas.forEach(function(p){
     var base=new Date(p.startDate+'T12:00:00');
-    for (var i=0;i<p.nparc;i++){
-      var venc=new Date(base.getFullYear(), base.getMonth()+i, base.getDate());
-      if (venc>r.fim){
-        if (currentCycle==='familia'||p.pessoa===currentCycle||p.pessoa==='familia'){
-          total+=p.valorParcela;
-        }
-      }
+    for(var i=0;i<p.nparc;i++){
+      var venc=new Date(base.getFullYear(),base.getMonth()+i,base.getDate());
+      if(venc>r.fim&&(currentCycle==='familia'||p.pessoa===currentCycle||p.pessoa==='familia'))
+        total+=p.valorParcela;
     }
   });
   return total;
 }
-
 function spentByCat(id){
-  var total=gastosAtivos().filter(function(g){return g.cat===id;}).reduce(function(s,g){return s+g.val;},0);
-  // somar parcelas vigentes da categoria
-  if (id==='parcelas'){
-    total+=totalParcelasVigentes();
-  }
-  return total;
+  var t=gastosAtivos().filter(function(g){return g.cat===id;}).reduce(function(s,g){return s+g.val;},0);
+  if(id==='parcelas')t+=totalParcelasVig();
+  return t;
 }
 
-// ── RENDER ─────────────────────────────────────────────
-function render(){
-  renderSummary();
-  renderCats();
-  renderFuturoBanner();
-  if (currentTab==='historico') renderHist();
-  if (currentTab==='parcelas')  renderParcelas();
-}
+// ── RENDER ────────────────────────────────────────────
+function render(){renderSummary();renderCats();renderFuturoBanner();if(currentTab==='historico')renderHist();if(currentTab==='parcelas')renderParcelas();}
 
 function renderSummary(){
-  var lista=gastosAtivos();
-  var totalAvulso=lista.reduce(function(s,g){return s+g.val;},0);
-  var totalParcVig=totalParcelasVigentes();
-  var total=totalAvulso+totalParcVig;
+  var total=gastosAtivos().reduce(function(s,g){return s+g.val;},0)+totalParcelasVig();
   var saldo=TETO_TOTAL-total;
   var over=CATS.filter(function(c){return spentByCat(c.id)>=c.teto;}).length;
   var cg=total>TETO_TOTAL?'bad':total>TETO_TOTAL*0.8?'warn':'';
@@ -403,32 +330,17 @@ function renderSummary(){
 
 function renderFuturoBanner(){
   var fut=comprometimentoFuturo();
-  var wrap=document.getElementById('futuro-banner-wrap');
-  if (fut>0){
-    wrap.innerHTML='<div class="futuro-banner"><div class="futuro-label">Compromisso futuro em parcelas</div><div class="futuro-val">'+fmtBRL(fut)+'</div></div>';
-  } else {
-    wrap.innerHTML='';
-  }
+  document.getElementById('futuro-banner-wrap').innerHTML=fut>0?
+    '<div class="futuro-banner"><div class="futuro-label">Compromisso futuro em parcelas</div><div class="futuro-val">'+fmtBRL(fut)+'</div></div>':'';
 }
 
 function renderCats(){
-  var el=document.getElementById('cats');
-  el.innerHTML='';
+  var el=document.getElementById('cats');el.innerHTML='';
   CATS.forEach(function(c){
-    var spent=spentByCat(c.id);
-    var pct=Math.min(100,Math.round(spent/c.teto*100));
-    var over=spent>c.teto;
-    var saldo=c.teto-spent;
+    var spent=spentByCat(c.id),pct=Math.min(100,Math.round(spent/c.teto*100)),over=spent>c.teto,saldo=c.teto-spent;
     var saldoTxt=over?'⚠ Estourou '+fmtBRL(Math.abs(saldo)):saldo>0?'Saldo: '+fmtBRL(saldo)+' ('+pct+'% usado)':'No limite';
-    var div=document.createElement('div');
-    div.className='cat-card';
-    div.innerHTML=
-      '<div class="cat-row">'+
-        '<div class="cat-left"><div class="cat-dot" style="background:'+c.color+'"></div><div class="cat-name">'+c.name+'</div></div>'+
-        '<div class="cat-right"><div class="cat-spent" style="color:'+(over?'#A32D2D':c.dark)+'">'+fmtBRL(spent)+'</div><div class="cat-teto">de '+fmtBRL(c.teto)+'</div></div>'+
-      '</div>'+
-      '<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+(over?'#A32D2D':c.color)+'"></div></div>'+
-      '<div class="cat-saldo'+(over?' over':'')+'">'+saldoTxt+'</div>';
+    var div=document.createElement('div');div.className='cat-card';
+    div.innerHTML='<div class="cat-row"><div class="cat-left"><div class="cat-dot" style="background:'+c.color+'"></div><div class="cat-name">'+c.name+'</div></div><div class="cat-right"><div class="cat-spent" style="color:'+(over?'#A32D2D':c.dark)+'">'+fmtBRL(spent)+'</div><div class="cat-teto">de '+fmtBRL(c.teto)+'</div></div></div><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+(over?'#A32D2D':c.color)+'"></div></div><div class="cat-saldo'+(over?' over':'')+'">'+saldoTxt+'</div>';
     el.appendChild(div);
   });
 }
@@ -436,34 +348,20 @@ function renderCats(){
 function renderHist(){
   var wrap=document.getElementById('hist-wrap');
   var lista=gastosAtivos().slice().sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts;});
-  if (!lista.length){wrap.innerHTML='<div class="empty">Nenhum gasto avulso neste ciclo.</div>';return;}
-  var grupos={};
-  lista.forEach(function(g){if(!grupos[g.date])grupos[g.date]=[];grupos[g.date].push(g);});
+  if(!lista.length){wrap.innerHTML='<div class="empty">Nenhum gasto avulso neste ciclo.</div>';return;}
+  var grupos={};lista.forEach(function(g){if(!grupos[g.date])grupos[g.date]=[];grupos[g.date].push(g);});
   wrap.innerHTML='';
   Object.keys(grupos).sort(function(a,b){return b.localeCompare(a);}).forEach(function(date){
     var d=new Date(date+'T12:00:00');
     var label=d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
     label=label.charAt(0).toUpperCase()+label.slice(1);
-    var gl=document.createElement('div');
-    gl.className='hist-group-label';
-    gl.textContent=label;
-    wrap.appendChild(gl);
+    var gl=document.createElement('div');gl.className='hist-group-label';gl.textContent=label;wrap.appendChild(gl);
     grupos[date].forEach(function(g){
       var cat=CATS.find(function(c){return c.id===g.cat;});
-      var item=document.createElement('div');
-      item.className='hist-item';
-      var meta=[];
-      if (g.desc) meta.push(g.desc);
-      if (g.pessoa&&g.pessoa!=='familia') meta.push(g.pessoa.charAt(0).toUpperCase()+g.pessoa.slice(1));
-      item.innerHTML=
-        '<div class="hist-left">'+
-          '<div class="hist-cat">'+(cat?cat.name:'?')+'</div>'+
-          (meta.length?'<div class="hist-meta">'+meta.join(' · ')+'</div>':'')+
-        '</div>'+
-        '<div class="hist-right">'+
-          '<div class="hist-val">'+fmtDec(g.val)+'</div>'+
-          '<div class="hist-del" data-ts="'+g.ts+'">×</div>'+
-        '</div>';
+      var item=document.createElement('div');item.className='hist-item';
+      var meta=[];if(g.desc)meta.push(g.desc);if(g.pessoa&&g.pessoa!=='familia')meta.push(g.pessoa.charAt(0).toUpperCase()+g.pessoa.slice(1));
+      var migTag=g.migrado?' <span style="font-size:10px;color:#639922">migrado</span>':'';
+      item.innerHTML='<div class="hist-left"><div class="hist-cat">'+(cat?cat.name:'?')+migTag+'</div>'+(meta.length?'<div class="hist-meta">'+meta.join(' · ')+'</div>':'')+'</div><div class="hist-right"><div class="hist-val">'+fmtDec(g.val)+'</div><div class="hist-del" data-ts="'+g.ts+'">×</div></div>';
       item.querySelector('.hist-del').addEventListener('click',function(){delGasto(parseInt(this.getAttribute('data-ts')));});
       wrap.appendChild(item);
     });
@@ -471,53 +369,29 @@ function renderHist(){
 }
 
 function renderParcelas(){
-  // card total
-  var totalMes=totalParcelasVigentes();
-  var totalFut=comprometimentoFuturo();
-  var totalGeral=parcelas.reduce(function(s,p){return s+p.valorTotal;},0);
+  var totalMes=totalParcelasVig(),totalFut=comprometimentoFuturo();
   document.getElementById('parc-total-card').innerHTML=
     '<div><div class="parc-total-label">Parcelas este ciclo</div><div class="parc-total-val">'+fmtBRL(totalMes)+'</div></div>'+
     '<div style="text-align:right"><div class="parc-total-label">Compromisso futuro</div><div class="parc-total-val" style="font-size:14px">'+fmtBRL(totalFut)+'</div></div>';
 
+  if(migradoCount>0){
+    document.getElementById('migrado-aviso').innerHTML='<div class="migrado-banner">✅ '+migradoCount+' gasto'+(migradoCount>1?'s':'')+' da versão anterior migrado'+(migradoCount>1?'s':'')+' com sucesso.</div>';
+  }
+
   var list=document.getElementById('parc-list');
   var filtradas=currentCycle==='familia'?parcelas:parcelas.filter(function(p){return p.pessoa===currentCycle||p.pessoa==='familia';});
-  if (!filtradas.length){list.innerHTML='<div class="empty">Nenhuma compra parcelada registrada.</div>';return;}
+  if(!filtradas.length){list.innerHTML='<div class="empty">Nenhuma compra parcelada registrada.</div>';return;}
   list.innerHTML='';
   filtradas.slice().sort(function(a,b){return a.startDate.localeCompare(b.startDate);}).forEach(function(p){
-    var base=new Date(p.startDate+'T12:00:00');
-    var hoje=new Date();
-    // quantas parcelas já passaram
-    var pagas=0;
-    for (var i=0;i<p.nparc;i++){
-      var venc=new Date(base.getFullYear(),base.getMonth()+i,base.getDate());
-      if (venc<=hoje) pagas=i+1;
-    }
+    var base=new Date(p.startDate+'T12:00:00'),hoje=new Date(),pagas=0;
+    for(var i=0;i<p.nparc;i++){var venc=new Date(base.getFullYear(),base.getMonth()+i,base.getDate());if(venc<=hoje)pagas=i+1;}
     pagas=Math.min(pagas,p.nparc);
     var restantes=p.nparc-pagas;
     var fimDate=new Date(base.getFullYear(),base.getMonth()+(p.nparc-1),base.getDate());
-    var pct=Math.round(pagas/p.nparc*100);
-    var done=pagas>=p.nparc;
+    var pct=Math.round(pagas/p.nparc*100),done=pagas>=p.nparc;
     var cat=CATS.find(function(c){return c.id===p.cat;});
-    var div=document.createElement('div');
-    div.className='parc-item';
-    div.innerHTML=
-      '<div class="parc-header">'+
-        '<div class="parc-name">'+(p.desc||'Compra parcelada')+'</div>'+
-        '<div class="parc-badge'+(done?' done':'')+'">'+pagas+'/'+p.nparc+'</div>'+
-      '</div>'+
-      '<div class="parc-grid">'+
-        '<div class="parc-stat"><div class="parc-stat-label">Parcela</div><div class="parc-stat-val">'+fmtBRL(p.valorParcela)+'</div></div>'+
-        '<div class="parc-stat"><div class="parc-stat-label">Restante</div><div class="parc-stat-val">'+fmtBRL(restantes*p.valorParcela)+'</div></div>'+
-        '<div class="parc-stat"><div class="parc-stat-label">Total</div><div class="parc-stat-val">'+fmtBRL(p.valorTotal)+'</div></div>'+
-      '</div>'+
-      '<div class="parc-bar-bg"><div class="parc-bar-fill" style="width:'+pct+'%;background:'+(done?'#639922':'#1a6fbd')+'"></div></div>'+
-      '<div class="parc-footer">'+
-        '<div class="parc-meses">'+(cat?cat.name:'')+(done?' · ✅ Quitada':' · '+restantes+' parcela'+(restantes!==1?'s':''))+'</div>'+
-        '<div style="display:flex;align-items:center;gap:8px">'+
-          '<div class="parc-vence">até '+fmtDate(fimDate)+'/'+String(fimDate.getFullYear()).slice(-2)+'</div>'+
-          '<div class="parc-del" data-ts="'+p.ts+'">×</div>'+
-        '</div>'+
-      '</div>';
+    var div=document.createElement('div');div.className='parc-item';
+    div.innerHTML='<div class="parc-header"><div class="parc-name">'+(p.desc||'Compra parcelada')+'</div><div class="parc-badge'+(done?' done':'')+'">'+pagas+'/'+p.nparc+'</div></div><div class="parc-grid"><div class="parc-stat"><div class="parc-stat-label">Parcela</div><div class="parc-stat-val">'+fmtBRL(p.valorParcela)+'</div></div><div class="parc-stat"><div class="parc-stat-label">Restante</div><div class="parc-stat-val">'+fmtBRL(restantes*p.valorParcela)+'</div></div><div class="parc-stat"><div class="parc-stat-label">Total</div><div class="parc-stat-val">'+fmtBRL(p.valorTotal)+'</div></div></div><div class="parc-bar-bg"><div class="parc-bar-fill" style="width:'+pct+'%;background:'+(done?'#639922':'#1a6fbd')+'"></div></div><div class="parc-footer"><div class="parc-meses">'+(cat?cat.name:'')+(done?' · ✅ Quitada':' · '+restantes+' parcela'+(restantes!==1?'s':''))+'</div><div style="display:flex;align-items:center;gap:8px"><div class="parc-vence">até '+fmtDate(fimDate)+'/'+String(fimDate.getFullYear()).slice(-2)+'</div><div class="parc-del" data-ts="'+p.ts+'">×</div></div></div>';
     div.querySelector('.parc-del').addEventListener('click',function(){delParcela(parseInt(this.getAttribute('data-ts')));});
     list.appendChild(div);
   });
@@ -531,94 +405,60 @@ function setTipo(tipo){
   document.getElementById('campos-avulso').style.display=tipo==='avulso'?'block':'none';
   document.getElementById('campos-parc').style.display=tipo==='parcelado'?'block':'none';
   document.getElementById('sheet-title').textContent=tipo==='avulso'?'Registrar gasto':'Compra parcelada';
+  if(tipo==='parcelado')document.getElementById('inp-cat').value='parcelas';
 }
-
 function openModal(){
   document.getElementById('inp-date').value=todayISO();
   document.getElementById('inp-parc-date').value=todayISO();
-  document.getElementById('inp-val').value='';
-  document.getElementById('inp-total').value='';
-  document.getElementById('inp-nparc').value='';
-  document.getElementById('inp-desc').value='';
+  document.getElementById('inp-val').value='';document.getElementById('inp-total').value='';
+  document.getElementById('inp-nparc').value='';document.getElementById('inp-desc').value='';
   document.getElementById('err-val').style.display='none';
   document.getElementById('parc-preview').style.display='none';
   setTipo('avulso');
   document.getElementById('overlay').classList.add('open');
   setTimeout(function(){document.getElementById('inp-val').focus();},300);
 }
-
 function closeModal(){document.getElementById('overlay').classList.remove('open');}
-
-// preview ao digitar
 function atualizaPreview(){
   var total=parseFloat(document.getElementById('inp-total').value);
   var nparc=parseInt(document.getElementById('inp-nparc').value);
   var date=document.getElementById('inp-parc-date').value;
   var prev=document.getElementById('parc-preview');
-  if (total>0&&nparc>=2&&date){
-    var parc=total/nparc;
+  if(total>0&&nparc>=2&&date){
     var base=new Date(date+'T12:00:00');
     var fim=new Date(base.getFullYear(),base.getMonth()+(nparc-1),base.getDate());
-    document.getElementById('preview-val').textContent=fmtDec(parc);
+    document.getElementById('preview-val').textContent=fmtDec(total/nparc);
     document.getElementById('preview-fim').textContent=fmtDate(fim)+'/'+fim.getFullYear();
     prev.style.display='block';
-  } else {
-    prev.style.display='none';
-  }
+  }else{prev.style.display='none';}
 }
-
 function saveGasto(){
   var err=document.getElementById('err-val');
-  if (tipoAtual==='avulso'){
+  if(tipoAtual==='avulso'){
     var val=parseFloat(document.getElementById('inp-val').value);
     var date=document.getElementById('inp-date').value;
-    if (!val||val<=0||!date){err.style.display='block';return;}
+    if(!val||val<=0||!date){err.style.display='block';return;}
     err.style.display='none';
-    gastos.push({
-      ts:Date.now(), cat:document.getElementById('inp-cat').value,
-      val:val, date:date,
-      pessoa:document.getElementById('inp-pessoa').value,
-      desc:document.getElementById('inp-desc').value.trim()
-    });
-  } else {
+    gastos.push({ts:Date.now(),cat:document.getElementById('inp-cat').value,val:val,date:date,pessoa:document.getElementById('inp-pessoa').value,desc:document.getElementById('inp-desc').value.trim()});
+  }else{
     var total=parseFloat(document.getElementById('inp-total').value);
     var nparc=parseInt(document.getElementById('inp-nparc').value);
     var date=document.getElementById('inp-parc-date').value;
-    if (!total||total<=0||!nparc||nparc<2||!date){err.style.display='block';return;}
+    if(!total||total<=0||!nparc||nparc<2||!date){err.style.display='block';return;}
     err.style.display='none';
-    parcelas.push({
-      ts:Date.now(), cat:document.getElementById('inp-cat').value,
-      valorTotal:total, nparc:nparc,
-      valorParcela:Math.round((total/nparc)*100)/100,
-      startDate:date,
-      pessoa:document.getElementById('inp-pessoa').value,
-      desc:document.getElementById('inp-desc').value.trim()
-    });
+    parcelas.push({ts:Date.now(),cat:document.getElementById('inp-cat').value,valorTotal:total,nparc:nparc,valorParcela:Math.round((total/nparc)*100)/100,startDate:date,pessoa:document.getElementById('inp-pessoa').value,desc:document.getElementById('inp-desc').value.trim()});
   }
-  saveLocal(); fbSave(); closeModal(); render();
+  saveLocal();fbSave();closeModal();render();
 }
+function delGasto(ts){if(!confirm('Remover este gasto?'))return;gastos=gastos.filter(function(g){return g.ts!==ts;});saveLocal();fbSave();render();}
+function delParcela(ts){if(!confirm('Remover esta compra parcelada?'))return;parcelas=parcelas.filter(function(p){return p.ts!==ts;});saveLocal();fbSave();render();}
 
-function delGasto(ts){
-  if (!confirm('Remover este gasto?')) return;
-  gastos=gastos.filter(function(g){return g.ts!==ts;});
-  saveLocal(); fbSave(); render();
-}
-
-function delParcela(ts){
-  if (!confirm('Remover esta compra parcelada?')) return;
-  parcelas=parcelas.filter(function(p){return p.ts!==ts;});
-  saveLocal(); fbSave(); render();
-}
-
-// ── CICLO / TABS ───────────────────────────────────────
+// ── CICLO / TABS ──────────────────────────────────────
 function setCycle(type){
   currentCycle=type;
-  ['thiago','taina','familia'].forEach(function(t){
-    document.getElementById('btn-'+t).classList.toggle('active',t===type);
-  });
-  updateCycleSub(); render();
+  ['thiago','taina','familia'].forEach(function(t){document.getElementById('btn-'+t).classList.toggle('active',t===type);});
+  updateCycleSub();render();
 }
-
 function switchTab(tab,el){
   currentTab=tab;
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
@@ -629,20 +469,39 @@ function switchTab(tab,el){
   render();
 }
 
-// ── STORAGE ────────────────────────────────────────────
+// ── STORAGE ───────────────────────────────────────────
 function saveLocal(){
-  try{
-    localStorage.setItem('orcfam_gastos_v3',JSON.stringify(gastos));
-    localStorage.setItem('orcfam_parcelas_v3',JSON.stringify(parcelas));
-  }catch(e){}
+  try{localStorage.setItem('orcfam_gastos_v3',JSON.stringify(gastos));localStorage.setItem('orcfam_parcelas_v3',JSON.stringify(parcelas));}catch(e){}
 }
-
 function loadLocal(){
   try{gastos=JSON.parse(localStorage.getItem('orcfam_gastos_v3')||'[]');}catch(e){gastos=[];}
   try{parcelas=JSON.parse(localStorage.getItem('orcfam_parcelas_v3')||'[]');}catch(e){parcelas=[];}
 }
 
-// ── FIREBASE ───────────────────────────────────────────
+// ── MIGRAÇÃO ──────────────────────────────────────────
+// Converte gastos da v2 (formato antigo) para v3
+function migrarGastosAntigos(remoteAntigos){
+  if(!Array.isArray(remoteAntigos)||!remoteAntigos.length)return;
+  var tsExistentes={};gastos.forEach(function(g){tsExistentes[g.ts]=true;});
+  var novos=0;
+  remoteAntigos.forEach(function(g){
+    if(!tsExistentes[g.ts]){
+      // formato v2 já é compatível com v3, apenas marcamos como migrado
+      var novo=Object.assign({},g,{migrado:true});
+      gastos.push(novo);
+      tsExistentes[g.ts]=true;
+      novos++;
+    }
+  });
+  if(novos>0){
+    migradoCount+=novos;
+    saveLocal();
+    if(db)db.ref('gastos_v3').set(gastos);
+    render();
+  }
+}
+
+// ── FIREBASE ──────────────────────────────────────────
 var FB_CONFIG={
   apiKey:"AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",
   authDomain:"orcamento-familia-b9681.firebaseapp.com",
@@ -652,16 +511,11 @@ var FB_CONFIG={
   messagingSenderId:"945768398506",
   appId:"1:945768398506:web:9bce437bbbd724b2799ad3"
 };
-
 function setSyncDot(s){document.getElementById('sync-dot').className='sync-dot'+(s?' '+s:'');}
-
 function fbSave(){
-  if (!db) return;
-  setSyncDot('syncing');
-  Promise.all([
-    db.ref('gastos_v3').set(gastos),
-    db.ref('parcelas_v3').set(parcelas)
-  ]).then(function(){setSyncDot('');}).catch(function(){setSyncDot('error');});
+  if(!db)return;setSyncDot('syncing');
+  Promise.all([db.ref('gastos_v3').set(gastos),db.ref('parcelas_v3').set(parcelas)])
+    .then(function(){setSyncDot('');}).catch(function(){setSyncDot('error');});
 }
 
 function initFirebase(){
@@ -675,29 +529,41 @@ function initFirebase(){
         firebase.initializeApp(FB_CONFIG);
         db=firebase.database();
         setSyncDot('syncing');
-        // escutar gastos
+
+        // 1. Escutar gastos v3 (nova versão)
         db.ref('gastos_v3').on('value',function(snap){
           var remote=snap.val();
-          if (Array.isArray(remote)&&remote.length>0){
+          if(Array.isArray(remote)&&remote.length>0){
             var ts={};gastos.forEach(function(g){ts[g.ts]=true;});
             remote.forEach(function(g){if(!ts[g.ts])gastos.push(g);});
             var ts2={};remote.forEach(function(g){ts2[g.ts]=true;});
-            if (gastos.some(function(g){return !ts2[g.ts];})) db.ref('gastos_v3').set(gastos);
-            saveLocal(); render();
-          } else if (!remote&&gastos.length>0) db.ref('gastos_v3').set(gastos);
+            if(gastos.some(function(g){return!ts2[g.ts];}))db.ref('gastos_v3').set(gastos);
+            saveLocal();render();
+          }else if(!remote&&gastos.length>0)db.ref('gastos_v3').set(gastos);
           setSyncDot('');
         });
-        // escutar parcelas
+
+        // 2. Escutar parcelas v3
         db.ref('parcelas_v3').on('value',function(snap){
           var remote=snap.val();
-          if (Array.isArray(remote)&&remote.length>0){
+          if(Array.isArray(remote)&&remote.length>0){
             var ts={};parcelas.forEach(function(p){ts[p.ts]=true;});
             remote.forEach(function(p){if(!ts[p.ts])parcelas.push(p);});
             var ts2={};remote.forEach(function(p){ts2[p.ts]=true;});
-            if (parcelas.some(function(p){return !ts2[p.ts];})) db.ref('parcelas_v3').set(parcelas);
-            saveLocal(); render();
-          } else if (!remote&&parcelas.length>0) db.ref('parcelas_v3').set(parcelas);
+            if(parcelas.some(function(p){return!ts2[p.ts];}))db.ref('parcelas_v3').set(parcelas);
+            saveLocal();render();
+          }else if(!remote&&parcelas.length>0)db.ref('parcelas_v3').set(parcelas);
         });
+
+        // 3. LER VERSÕES ANTIGAS e migrar automaticamente
+        db.ref('gastos_v2').once('value',function(snap){
+          migrarGastosAntigos(snap.val());
+        });
+        // também tenta a chave original "gastos" se existir
+        db.ref('gastos').once('value',function(snap){
+          migrarGastosAntigos(snap.val());
+        });
+
       }catch(e){setSyncDot('error');}
     };
     s2.onerror=function(){setSyncDot('error');};
@@ -707,18 +573,13 @@ function initFirebase(){
   document.head.appendChild(s1);
 }
 
-// ── SELECT ─────────────────────────────────────────────
+// ── SELECT ────────────────────────────────────────────
 function populateSelect(){
   var sel=document.getElementById('inp-cat');
-  CATS.forEach(function(c){
-    var o=document.createElement('option');
-    o.value=c.id; o.textContent=c.name; sel.appendChild(o);
-  });
-  // por padrão selecionar parcelas quando tipo=parcelado
-  document.getElementById('inp-cat').value='parcelas';
+  CATS.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);});
 }
 
-// ── INIT ───────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────
 loadLocal();
 populateSelect();
 updateCycleSub();
@@ -730,11 +591,6 @@ document.getElementById('overlay').addEventListener('click',function(e){if(e.tar
 document.getElementById('inp-total').addEventListener('input',atualizaPreview);
 document.getElementById('inp-nparc').addEventListener('input',atualizaPreview);
 document.getElementById('inp-parc-date').addEventListener('change',atualizaPreview);
-document.getElementById('tipo-parc').addEventListener('click',function(){
-  document.getElementById('inp-cat').value='parcelas';
-});
-
-initFirebase();
 </script>
 </body>
 </html>
