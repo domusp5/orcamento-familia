@@ -533,27 +533,32 @@ function initFirebase(){
 
         // 1. Escutar gastos v3 (nova versão)
         db.ref('gastos_v2').on('value',function(snap){
-          var remote=snap.val();
-          if(Array.isArray(remote)&&remote.length>0){
+          var raw=snap.val();
+          if(!raw){if(gastos.length>0)db.ref('gastos_v2').set(gastos);setSyncDot('');return;}
+          // Firebase pode retornar objeto {0:{...},1:{...}} ou array — normalizar para array
+          var remote=Array.isArray(raw)?raw:Object.values(raw);
+          if(remote.length>0){
             var ts={};gastos.forEach(function(g){ts[g.ts]=true;});
-            remote.forEach(function(g){if(!ts[g.ts])gastos.push(g);});
-            var ts2={};remote.forEach(function(g){ts2[g.ts]=true;});
+            remote.forEach(function(g){if(g&&g.ts&&!ts[g.ts]){gastos.push(g);ts[g.ts]=true;}});
+            var ts2={};remote.forEach(function(g){if(g&&g.ts)ts2[g.ts]=true;});
             if(gastos.some(function(g){return!ts2[g.ts];}))db.ref('gastos_v2').set(gastos);
             saveLocal();render();
-          }else if(!remote&&gastos.length>0)db.ref('gastos_v2').set(gastos);
+          }
           setSyncDot('');
         });
 
         // 2. Escutar parcelas v3
         db.ref('parcelas_v3').on('value',function(snap){
-          var remote=snap.val();
-          if(Array.isArray(remote)&&remote.length>0){
+          var raw=snap.val();
+          if(!raw){if(parcelas.length>0)db.ref('parcelas_v3').set(parcelas);return;}
+          var remote=Array.isArray(raw)?raw:Object.values(raw);
+          if(remote.length>0){
             var ts={};parcelas.forEach(function(p){ts[p.ts]=true;});
-            remote.forEach(function(p){if(!ts[p.ts])parcelas.push(p);});
-            var ts2={};remote.forEach(function(p){ts2[p.ts]=true;});
+            remote.forEach(function(p){if(p&&p.ts&&!ts[p.ts]){parcelas.push(p);ts[p.ts]=true;}});
+            var ts2={};remote.forEach(function(p){if(p&&p.ts)ts2[p.ts]=true;});
             if(parcelas.some(function(p){return!ts2[p.ts];}))db.ref('parcelas_v3').set(parcelas);
             saveLocal();render();
-          }else if(!remote&&parcelas.length>0)db.ref('parcelas_v3').set(parcelas);
+          }
         });
 
         // 3. LER VERSÕES ANTIGAS e migrar automaticamente
