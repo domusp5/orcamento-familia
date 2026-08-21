@@ -472,10 +472,10 @@ function switchTab(tab,el){
 
 // ── STORAGE ───────────────────────────────────────────
 function saveLocal(){
-  try{localStorage.setItem('orcfam_gastos_v3',JSON.stringify(gastos));localStorage.setItem('orcfam_parcelas_v3',JSON.stringify(parcelas));}catch(e){}
+  try{localStorage.setItem('orcfam_gastos_v2',JSON.stringify(gastos));localStorage.setItem('orcfam_parcelas_v3',JSON.stringify(parcelas));}catch(e){}
 }
 function loadLocal(){
-  try{gastos=JSON.parse(localStorage.getItem('orcfam_gastos_v3')||'[]');}catch(e){gastos=[];}
+  try{gastos=JSON.parse(localStorage.getItem('orcfam_gastos_v2')||'[]');}catch(e){gastos=[];}
   try{parcelas=JSON.parse(localStorage.getItem('orcfam_parcelas_v3')||'[]');}catch(e){parcelas=[];}
 }
 
@@ -497,7 +497,7 @@ function migrarGastosAntigos(remoteAntigos){
   if(novos>0){
     migradoCount+=novos;
     saveLocal();
-    if(db)db.ref('gastos_v3').set(gastos);
+    if(db)db.ref('gastos_v2').set(gastos);
     render();
   }
 }
@@ -515,7 +515,7 @@ var FB_CONFIG={
 function setSyncDot(s){document.getElementById('sync-dot').className='sync-dot'+(s?' '+s:'');}
 function fbSave(){
   if(!db)return;setSyncDot('syncing');
-  Promise.all([db.ref('gastos_v3').set(gastos),db.ref('parcelas_v3').set(parcelas)])
+  Promise.all([db.ref('gastos_v2').set(gastos),db.ref('parcelas_v3').set(parcelas)])
     .then(function(){setSyncDot('');}).catch(function(){setSyncDot('error');});
 }
 
@@ -532,15 +532,15 @@ function initFirebase(){
         setSyncDot('syncing');
 
         // 1. Escutar gastos v3 (nova versão)
-        db.ref('gastos_v3').on('value',function(snap){
+        db.ref('gastos_v2').on('value',function(snap){
           var remote=snap.val();
           if(Array.isArray(remote)&&remote.length>0){
             var ts={};gastos.forEach(function(g){ts[g.ts]=true;});
             remote.forEach(function(g){if(!ts[g.ts])gastos.push(g);});
             var ts2={};remote.forEach(function(g){ts2[g.ts]=true;});
-            if(gastos.some(function(g){return!ts2[g.ts];}))db.ref('gastos_v3').set(gastos);
+            if(gastos.some(function(g){return!ts2[g.ts];}))db.ref('gastos_v2').set(gastos);
             saveLocal();render();
-          }else if(!remote&&gastos.length>0)db.ref('gastos_v3').set(gastos);
+          }else if(!remote&&gastos.length>0)db.ref('gastos_v2').set(gastos);
           setSyncDot('');
         });
 
@@ -557,13 +557,7 @@ function initFirebase(){
         });
 
         // 3. LER VERSÕES ANTIGAS e migrar automaticamente
-        db.ref('gastos_v2').once('value',function(snap){
-          migrarGastosAntigos(snap.val());
-        });
         // também tenta a chave original "gastos" se existir
-        db.ref('gastos').once('value',function(snap){
-          migrarGastosAntigos(snap.val());
-        });
 
       }catch(e){setSyncDot('error');}
     };
