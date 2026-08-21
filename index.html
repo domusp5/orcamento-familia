@@ -67,7 +67,8 @@ body{padding-bottom:90px}
 .btn-save{width:100%;padding:14px;border:none;border-radius:12px;background:#1a1a18;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px}
 .hist-wrap{padding:0 14px}
 .grp-label{font-size:10px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.6px;padding:10px 0 5px}
-.hist-item{background:#fff;border-radius:11px;border:.5px solid #e8e6e0;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.hist-item{background:#fff;border-radius:11px;border:.5px solid #e8e6e0;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;transition:background .15s}
+.hist-item.pressing{background:#f0ede8;transform:scale(.98)}
 .hist-cat{font-size:13px;font-weight:500;color:#1a1a18}
 .hist-meta{font-size:11px;color:#888780;margin-top:2px}
 .hist-val{font-size:14px;font-weight:600;color:#1a1a18}
@@ -91,6 +92,28 @@ body{padding-bottom:90px}
 .parc-meta{font-size:11px;color:#888780}
 .parc-fim{font-size:11px;font-weight:500;color:#1a6fbd}
 .empty{text-align:center;padding:40px 20px;color:#888780;font-size:14px}
+.cat-panel{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:none}
+.cat-panel.open{display:block}
+.cat-panel-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:#fff;border-radius:20px 20px 0 0;padding:14px 20px 44px;max-height:80vh;overflow-y:auto;z-index:301}
+.cat-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.cat-panel-title{font-size:16px;font-weight:600;color:#1a1a18}
+.cat-panel-close{font-size:24px;color:#888780;cursor:pointer;padding:2px 4px;line-height:1}
+.cat-panel-sub{font-size:11px;color:#888780;margin-bottom:14px}
+.cat-panel-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:.5px solid #e8e6e0}
+.cat-panel-item:last-child{border-bottom:none}
+.cat-panel-left{flex:1}
+.cat-panel-desc{font-size:13px;font-weight:500;color:#1a1a18}
+.cat-panel-meta{font-size:11px;color:#888780;margin-top:2px}
+.cat-panel-val{font-size:14px;font-weight:600;color:#1a1a18;margin-left:12px}
+.cat-panel-total{display:flex;justify-content:space-between;align-items:center;padding:12px 0 0;margin-top:4px;border-top:1px solid #e8e6e0}
+.cat-panel-total-label{font-size:12px;color:#888780;font-weight:500}
+.cat-panel-total-val{font-size:16px;font-weight:700;color:#1a1a18}
+@media(prefers-color-scheme:dark){
+  .cat-panel-sheet{background:#1e1e1c}
+  .cat-panel-title,.cat-panel-desc,.cat-panel-val,.cat-panel-total-val{color:#f0ede8}
+  .cat-panel-item{border-bottom-color:#2e2e2b}
+  .cat-panel-total{border-top-color:#2e2e2b}
+}
 @media(prefers-color-scheme:dark){
   body,html{background:#111110;color:#f0ede8}
   .header{background:#0d0d0c}
@@ -109,6 +132,7 @@ body{padding-bottom:90px}
   .preview-box{color:#f0ede8}
   .tab{color:#6b6a66}
   .tab.active{color:#f0ede8}
+  .hist-item.pressing{background:#2e2e2b}
   .sum-label,.section-label,.grp-label,.hist-meta,.cat-saldo,.cat-teto,.parc-stat-label,.parc-meta,.cycle-sub{color:#6b6a66}
 }
 </style>
@@ -151,6 +175,22 @@ body{padding-bottom:90px}
 
 <button class="fab" id="fab">+</button>
 
+<div class="cat-panel" id="cat-panel">
+  <div class="cat-panel-sheet">
+    <div class="handle" style="margin-bottom:14px"></div>
+    <div class="cat-panel-head">
+      <div class="cat-panel-title" id="cp-title"></div>
+      <div class="cat-panel-close" id="cp-close">×</div>
+    </div>
+    <div class="cat-panel-sub" id="cp-sub"></div>
+    <div id="cp-list"></div>
+    <div class="cat-panel-total">
+      <div class="cat-panel-total-label">Total no ciclo</div>
+      <div class="cat-panel-total-val" id="cp-total"></div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="overlay">
   <div class="sheet">
     <div class="handle"></div>
@@ -192,10 +232,10 @@ var C=[
   {id:'mercado',    name:'Mercado + Hortifruti',teto:2200,cor:'#1D9E75',dk:'#085041'},
   {id:'feira',      name:'Feira livre',          teto:700, cor:'#639922',dk:'#27500A'},
   {id:'padaria',    name:'Padaria',              teto:300, cor:'#BA7517',dk:'#633806'},
-  {id:'ifood',      name:'iFood (fim de semana)',teto:400, cor:'#D85A30',dk:'#712B13'},
+  {id:'ifood',      name:'Delivery (iFood, Zé Delivery...)',teto:500, cor:'#D85A30',dk:'#712B13'},
   {id:'comida_rua', name:'Comida na rua',        teto:800, cor:'#D4537E',dk:'#72243E'},
   {id:'uber',       name:'Uber / 99',            teto:1000,cor:'#378ADD',dk:'#0C447C'},
-  {id:'lazer',      name:'Lazer (exceto iFood)', teto:500, cor:'#7F77DD',dk:'#3C3489'},
+  {id:'lazer',      name:'Saídas (restaurante, cinema, show)',teto:600, cor:'#7F77DD',dk:'#3C3489'},
   {id:'julia',      name:'Júlia',                teto:800, cor:'#993556',dk:'#4B1528'},
   {id:'outros',     name:'Outros',               teto:500, cor:'#888780',dk:'#444441'},
   {id:'parcelas',   name:'Compras parceladas',   teto:600, cor:'#1a6fbd',dk:'#0C447C'},
@@ -203,7 +243,7 @@ var C=[
 ];
 var TT=C.reduce(function(s,c){return s+c.teto;},0);
 var cycle='familia',tab='tetos',tipo='avulso';
-var G=[],P=[],db=null;
+var G=[],P=[],db=null,editTs=null,lpTimer=null;
 
 function p2(n){return String(n).padStart(2,'0');}
 function today(){var d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
@@ -277,7 +317,8 @@ function render(){
   C.forEach(function(c){
     var sp=spent(c.id),pct=Math.min(100,Math.round(sp/c.teto*100)),ov=sp>c.teto,sl=c.teto-sp;
     var txt=ov?'⚠ Estourou '+fB(Math.abs(sl)):sl>0?'Saldo: '+fB(sl)+' ('+pct+'% usado)':'No limite';
-    var d=document.createElement('div');d.className='cat-card';
+    var d=document.createElement('div');d.className='cat-card';d.style.cursor='pointer';
+    (function(cat){d.addEventListener('click',function(){openCatPanel(cat);});})(c);
     d.innerHTML='<div class="cat-row" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'+
       '<div style="display:flex;align-items:center"><div class="cat-dot" style="background:'+c.cor+';margin-right:8px"></div>'+
       '<span class="cat-name">'+c.name+'</span></div>'+
@@ -292,6 +333,46 @@ function render(){
 }
 
 function sc(l,v,cls){return '<div class="sum-card"><div class="sum-label">'+l+'</div><div class="sum-val '+cls+'">'+v+'</div></div>';}
+
+function openCatPanel(cat){
+  var r=range(cycle);
+  var lista=filtG().filter(function(g){return g.cat===cat.id;}).slice().sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts;});
+  // incluir parcelas vigentes se for categoria parcelas
+  var parcVig=[];
+  if(cat.id==='parcelas'){
+    parcVig=filtPvig();
+  }
+  document.getElementById('cp-title').textContent=cat.name;
+  document.getElementById('cp-sub').textContent=fD(r.i)+' → '+fD(r.f);
+  var list=document.getElementById('cp-list');
+  list.innerHTML='';
+  if(!lista.length&&!parcVig.length){
+    list.innerHTML='<div class="empty" style="padding:20px 0">Nenhum gasto nesta categoria.</div>';
+  }
+  // gastos avulsos
+  lista.forEach(function(g){
+    var d=new Date(g.date+'T12:00:00');
+    var dl=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    var meta=[];
+    if(g.desc)meta.push(g.desc);
+    meta.push(dl);
+    if(g.pessoa&&g.pessoa!=='familia')meta.push(g.pessoa.charAt(0).toUpperCase()+g.pessoa.slice(1));
+    var div=document.createElement('div');div.className='cat-panel-item';
+    div.innerHTML='<div class="cat-panel-left"><div class="cat-panel-desc">'+(g.desc||cat.name)+'</div><div class="cat-panel-meta">'+meta.filter(function(m){return m!==g.desc;}).join(' · ')+'</div></div><div class="cat-panel-val">'+fDec(g.val)+'</div>';
+    list.appendChild(div);
+  });
+  // parcelas vigentes
+  parcVig.forEach(function(v){
+    var d=v.vc;
+    var dl=fD(d);
+    var div=document.createElement('div');div.className='cat-panel-item';
+    div.innerHTML='<div class="cat-panel-left"><div class="cat-panel-desc">'+(v.p.desc||'Compra parcelada')+'</div><div class="cat-panel-meta">'+dl+' · parcela '+v.idx+'/'+v.p.nparc+'</div></div><div class="cat-panel-val">'+fDec(v.p.valorParcela)+'</div>';
+    list.appendChild(div);
+  });
+  document.getElementById('cp-total').textContent=fDec(spent(cat.id));
+  document.getElementById('cat-panel').classList.add('open');
+}
+function closeCatPanel(){document.getElementById('cat-panel').classList.remove('open');}
 
 function renderHist(){
   var wrap=document.getElementById('hist');
@@ -310,7 +391,17 @@ function renderHist(){
       var it=document.createElement('div');it.className='hist-item';
       it.innerHTML='<div style="flex:1;min-width:0"><div class="hist-cat">'+(cat?cat.name:'?')+'</div>'+(meta.length?'<div class="hist-meta">'+meta.join(' · ')+'</div>':'')+'</div>'+
         '<div style="display:flex;align-items:center"><div class="hist-val">'+fDec(g.val)+'</div><div class="del" data-ts="'+g.ts+'">×</div></div>';
-      it.querySelector('.del').addEventListener('click',function(){delG(parseInt(this.dataset.ts));});
+      it.querySelector('.del').addEventListener('click',function(e){e.stopPropagation();delG(parseInt(this.dataset.ts));});
+      // long press para editar
+      (function(gasto,el){
+        el.addEventListener('touchstart',function(e){
+          lpTimer=setTimeout(function(){el.classList.add('pressing');openEdit(gasto);},600);
+        },{passive:true});
+        el.addEventListener('touchend',function(){clearTimeout(lpTimer);el.classList.remove('pressing');});
+        el.addEventListener('touchmove',function(){clearTimeout(lpTimer);el.classList.remove('pressing');});
+        el.addEventListener('mousedown',function(){lpTimer=setTimeout(function(){el.classList.add('pressing');openEdit(gasto);},600);});
+        el.addEventListener('mouseup',function(){clearTimeout(lpTimer);el.classList.remove('pressing');});
+      })(g,it);
       wrap.appendChild(it);
     });
   });
@@ -373,12 +464,28 @@ function setTipo(t){
   if(t==='parcelado')document.getElementById('i-cat').value='parcelas';
 }
 function openModal(){
+  editTs=null;
+  document.getElementById('sh-title').textContent='Registrar gasto';
   document.getElementById('i-date').value=today();
   document.getElementById('i-pd').value=today();
   document.getElementById('i-val').value='';
   document.getElementById('i-total').value='';
   document.getElementById('i-np').value='';
   document.getElementById('i-desc').value='';
+  document.getElementById('err').style.display='none';
+  document.getElementById('preview').style.display='none';
+  setTipo('avulso');
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(function(){document.getElementById('i-val').focus();},300);
+}
+function openEdit(g){
+  editTs=g.ts;
+  document.getElementById('sh-title').textContent='Editar gasto';
+  document.getElementById('i-cat').value=g.cat;
+  document.getElementById('i-desc').value=g.desc||'';
+  document.getElementById('i-pessoa').value=g.pessoa||'familia';
+  document.getElementById('i-val').value=g.val;
+  document.getElementById('i-date').value=g.date;
   document.getElementById('err').style.display='none';
   document.getElementById('preview').style.display='none';
   setTipo('avulso');
@@ -407,7 +514,16 @@ function save(){
     var v=parseFloat(document.getElementById('i-val').value);
     var dt=document.getElementById('i-date').value;
     if(!v||v<=0||!dt){err.style.display='block';return;}
-    G.push({ts:Date.now(),cat:document.getElementById('i-cat').value,val:v,date:dt,pessoa:document.getElementById('i-pessoa').value,desc:document.getElementById('i-desc').value.trim()});
+    if(editTs){
+      // editar gasto existente
+      G=G.map(function(g){
+        if(g.ts===editTs) return {ts:g.ts,cat:document.getElementById('i-cat').value,val:v,date:dt,pessoa:document.getElementById('i-pessoa').value,desc:document.getElementById('i-desc').value.trim()};
+        return g;
+      });
+      editTs=null;
+    }else{
+      G.push({ts:Date.now(),cat:document.getElementById('i-cat').value,val:v,date:dt,pessoa:document.getElementById('i-pessoa').value,desc:document.getElementById('i-desc').value.trim()});
+    }
   }else{
     var t=parseFloat(document.getElementById('i-total').value);
     var n=parseInt(document.getElementById('i-np').value);
@@ -492,6 +608,8 @@ function populateCat(){
 // INIT
 loadAll();populateCat();subLabel();render();
 document.getElementById('fab').addEventListener('click',openModal);
+document.getElementById('cp-close').addEventListener('click',closeCatPanel);
+document.getElementById('cat-panel').addEventListener('click',function(e){if(e.target===this)closeCatPanel();});
 document.getElementById('btn-save').addEventListener('click',save);
 document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.getElementById('i-total').addEventListener('input',updPreview);
