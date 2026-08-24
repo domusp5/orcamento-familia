@@ -240,7 +240,8 @@ var C=[
   {id:'outros',     name:'Outros',               teto:500, cor:'#888780',dk:'#444441'},
   {id:'parcelas',   name:'Compras parceladas',   teto:600, cor:'#1a6fbd',dk:'#0C447C'},
   {id:'assinaturas',name:'Assinaturas',          teto:250, cor:'#5F5E5A',dk:'#2e2e2b'},
-  {id:'farmacia',   name:'Farmácia',              teto:400, cor:'#E24B4A',dk:'#791F1F'}
+  {id:'farmacia',   name:'Farmácia',              teto:400, cor:'#E24B4A',dk:'#791F1F'},
+  {id:'transporte',  name:'Transporte (ônibus, gasolina)',teto:300, cor:'#BA7517',dk:'#633806'}
 ];
 var TT=C.reduce(function(s,c){return s+c.teto;},0);
 var cycle='familia',tab='tetos',tipo='avulso';
@@ -491,7 +492,7 @@ function setTipo(t){
   document.getElementById('f-avulso').style.display=t==='avulso'?'block':'none';
   document.getElementById('f-parc').style.display=t==='parcelado'?'block':'none';
   document.getElementById('sh-title').textContent=t==='avulso'?'Registrar gasto':'Compra parcelada';
-  if(t==='parcelado')document.getElementById('i-cat').value='parcelas';
+  
 }
 function openModal(){
   editTs=null;
@@ -645,7 +646,6 @@ document.getElementById('overlay').addEventListener('click',function(e){if(e.tar
 document.getElementById('i-total').addEventListener('input',updPreview);
 document.getElementById('i-np').addEventListener('input',updPreview);
 document.getElementById('i-pd').addEventListener('change',updPreview);
-document.getElementById('t-parc').addEventListener('click',function(){document.getElementById('i-cat').value='parcelas';});
 initFB();
 </script>
 </body>
