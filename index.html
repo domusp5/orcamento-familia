@@ -68,18 +68,18 @@ body{padding-bottom:90px}
 .hist-wrap{padding:0 14px}
 .grp-label{font-size:10px;font-weight:700;color:#888780;text-transform:uppercase;letter-spacing:.6px;padding:10px 0 5px}
 .hist-item{background:#fff;border-radius:11px;border:.5px solid #e8e6e0;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;transition:background .15s}
-.hist-item.pressing{background:#f0ede8;transform:scale(.98)}
 .hist-cat{font-size:13px;font-weight:500;color:#1a1a18}
 .hist-meta{font-size:11px;color:#888780;margin-top:2px}
 .hist-val{font-size:14px;font-weight:600;color:#1a1a18}
 .del{font-size:22px;color:#ccc;cursor:pointer;padding:2px 4px;margin-left:10px}
 .del:active{color:#A32D2D}
+.edit-btn{font-size:11px;color:#1a6fbd;cursor:pointer;padding:3px 7px;margin-left:4px;border:.5px solid #b8d4f0;background:#E6F1FB;border-radius:6px;font-weight:500}
+.edit-btn:active{opacity:.7}
 .parc-wrap{padding:0 14px}
 .parc-top{background:#1a1a18;color:#fff;border-radius:12px;padding:13px 15px;margin:14px 0 12px;display:flex;justify-content:space-between}
 .parc-top-label{font-size:11px;color:#888780;margin-bottom:2px}
 .parc-top-val{font-size:18px;font-weight:700;color:#fff}
 .parc-card{background:#fff;border:.5px solid #e8e6e0;border-radius:12px;padding:13px 14px;margin-bottom:8px;transition:background .15s}
-.parc-card.pressing{background:#f0ede8;transform:scale(.98)}
 .parc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .parc-title{font-size:13px;font-weight:600;color:#1a1a18;flex:1}
 .parc-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:#E6F1FB;color:#0C447C;margin-left:8px}
@@ -133,8 +133,6 @@ body{padding-bottom:90px}
   .preview-box{color:#f0ede8}
   .tab{color:#6b6a66}
   .tab.active{color:#f0ede8}
-  .hist-item.pressing{background:#2e2e2b}
-  .parc-card.pressing{background:#2e2e2b}
   .sum-label,.section-label,.grp-label,.hist-meta,.cat-saldo,.cat-teto,.parc-stat-label,.parc-meta,.cycle-sub{color:#6b6a66}
 }
 </style>
@@ -423,18 +421,9 @@ function renderHist(){
       var meta=[];if(g.desc)meta.push(g.desc);if(g.pessoa&&g.pessoa!=='familia')meta.push(g.pessoa.charAt(0).toUpperCase()+g.pessoa.slice(1));
       var it=document.createElement('div');it.className='hist-item';
       it.innerHTML='<div style="flex:1;min-width:0"><div class="hist-cat">'+(cat?cat.name:'?')+'</div>'+(meta.length?'<div class="hist-meta">'+meta.join(' · ')+'</div>':'')+'</div>'+
-        '<div style="display:flex;align-items:center"><div class="hist-val">'+fDec(g.val)+'</div><div class="del" data-ts="'+g.ts+'">×</div></div>';
-      it.querySelector('.del').addEventListener('click',function(e){e.stopPropagation();delG(parseInt(this.dataset.ts));});
-      // long press para editar
-      (function(gasto,el){
-        el.addEventListener('touchstart',function(e){
-          lpTimer=setTimeout(function(){el.classList.add('pressing');openEdit(gasto);},600);
-        },{passive:true});
-        el.addEventListener('touchend',function(){clearTimeout(lpTimer);el.classList.remove('pressing');});
-        el.addEventListener('touchmove',function(){clearTimeout(lpTimer);el.classList.remove('pressing');});
-        el.addEventListener('mousedown',function(){lpTimer=setTimeout(function(){el.classList.add('pressing');openEdit(gasto);},600);});
-        el.addEventListener('mouseup',function(){clearTimeout(lpTimer);el.classList.remove('pressing');});
-      })(g,it);
+        '<div style="display:flex;align-items:center;gap:4px"><div class="hist-val">'+fDec(g.val)+'</div><button class="edit-btn" data-ts="'+g.ts+'">editar</button><div class="del" data-ts="'+g.ts+'">&#215;</div></div>';
+      it.querySelector('.del').addEventListener('click',function(e){e.stopPropagation();delG(parseInt(this.getAttribute('data-ts')));});
+      it.querySelector('.edit-btn').addEventListener('click',function(e){e.stopPropagation();var ts=parseInt(this.getAttribute('data-ts'));var gg=G.find(function(x){return x.ts===ts;});if(gg)openEdit(gg);});
       wrap.appendChild(it);
     });
   });
@@ -468,18 +457,10 @@ function renderParc(){
       '<div class="parc-foot">'+
         '<div class="parc-meta">'+(cat?cat.name:'')+(done?' · ✅ Quitada':' · '+rest+' restante'+(rest!==1?'s':''))+'</div>'+
         '<div style="display:flex;align-items:center;gap:8px"><div class="parc-fim">até '+fD(fim)+'/'+String(fim.getFullYear()).slice(-2)+'</div>'+
-        '<div class="del" data-ts="'+p.ts+'">×</div></div>'+
+        '<button class="edit-btn" data-ts="'+p.ts+'">editar</button><div class="del" data-ts="'+p.ts+'">×</div></div>'+
       '</div>';
     dc.querySelector('.del').addEventListener('click',function(){delP(parseInt(this.dataset.ts));});
-    // long press para editar
-    (function(parc,el){
-      var lp=null;
-      el.addEventListener('touchstart',function(){lp=setTimeout(function(){el.classList.add('pressing');openEditParc(parc);},600);},{passive:true});
-      el.addEventListener('touchend',function(){clearTimeout(lp);el.classList.remove('pressing');});
-      el.addEventListener('touchmove',function(){clearTimeout(lp);el.classList.remove('pressing');});
-      el.addEventListener('mousedown',function(){lp=setTimeout(function(){el.classList.add('pressing');openEditParc(parc);},600);});
-      el.addEventListener('mouseup',function(){clearTimeout(lp);el.classList.remove('pressing');});
-    })(p,dc);
+    // dc.querySelector('.edit-btn').addEventListener('click',function(){var ts=parseInt(this.getAttribute('data-ts'));var pp=P.find(function(x){return x.ts===ts;});if(pp)openEditParc(pp);});
     list.appendChild(dc);
   });
 }
