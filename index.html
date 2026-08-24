@@ -168,6 +168,7 @@ body{padding-bottom:90px}
 <div id="pg-parcelas" style="display:none">
   <div class="parc-wrap">
     <div class="parc-top" id="parc-top"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0;background:#2a2a28;border-radius:12px;padding:12px 10px" id="parc-indicadores"></div>
     <div class="section-label">Compras parceladas</div>
     <div id="parc-list"></div>
   </div>
@@ -431,9 +432,35 @@ function renderHist(){
 
 function renderParc(){
   var tvig=totalPvig(),tfut=futuro();
+  // indicadores
+  var hoje=new Date();
+  var mesAtual=hoje.getMonth(), anoAtual=hoje.getFullYear();
+  var totalAtivas=P.length;
+  // novas este mês: startDate no mês atual
+  var novasMes=P.filter(function(p){
+    var d=new Date(p.startDate+'T12:00:00');
+    return d.getMonth()===mesAtual && d.getFullYear()===anoAtual;
+  }).length;
+  // encerram no próximo mês: última parcela cai no mês que vem
+  var proxMes=new Date(anoAtual, mesAtual+1, 1);
+  var encerramProxMes=P.filter(function(p){
+    var b=new Date(p.startDate+'T12:00:00');
+    var fim=new Date(b.getFullYear(),b.getMonth()+(p.nparc-1),b.getDate());
+    return fim.getMonth()===proxMes.getMonth() && fim.getFullYear()===proxMes.getFullYear();
+  }).length;
+
   document.getElementById('parc-top').innerHTML=
     '<div><div class="parc-top-label">Este ciclo</div><div class="parc-top-val">'+fB(tvig)+'</div></div>'+
     '<div style="text-align:right"><div class="parc-top-label">Futuro</div><div class="parc-top-val" style="font-size:15px">'+fB(tfut)+'</div></div>';
+
+  // card de indicadores
+  var indicEl=document.getElementById('parc-indicadores');
+  if(indicEl){
+    indicEl.innerHTML=
+      '<div style="text-align:center"><div class="parc-top-label" style="color:#888780">Total ativas</div><div style="font-size:20px;font-weight:700;color:#f0ede8">'+totalAtivas+'</div></div>'+
+      '<div style="text-align:center"><div class="parc-top-label" style="color:#888780">Novas este mês</div><div style="font-size:20px;font-weight:700;color:'+(novasMes>0?'#BA7517':'#639922')+'">'+novasMes+'</div></div>'+
+      '<div style="text-align:center"><div class="parc-top-label" style="color:#888780">Encerram mês que vem</div><div style="font-size:20px;font-weight:700;color:#639922">'+encerramProxMes+'</div></div>';
+  }
   var list=document.getElementById('parc-list');
   var fp=cycle==='familia'?P:P.filter(function(p){return p.pessoa===cycle||p.pessoa==='familia';});
   if(!fp.length){list.innerHTML='<div class="empty">Nenhuma compra parcelada.</div>';return;}
@@ -460,7 +487,7 @@ function renderParc(){
         '<button class="edit-btn" data-ts="'+p.ts+'">editar</button><div class="del" data-ts="'+p.ts+'">×</div></div>'+
       '</div>';
     dc.querySelector('.del').addEventListener('click',function(){delP(parseInt(this.dataset.ts));});
-    // dc.querySelector('.edit-btn').addEventListener('click',function(){var ts=parseInt(this.getAttribute('data-ts'));var pp=P.find(function(x){return x.ts===ts;});if(pp)openEditParc(pp);});
+    dc.querySelector('.edit-btn').addEventListener('click',function(){var ts=parseInt(this.getAttribute('data-ts'));var pp=P.find(function(x){return x.ts===ts;});if(pp)openEditParc(pp);});
     list.appendChild(dc);
   });
 }
