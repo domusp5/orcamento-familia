@@ -78,7 +78,8 @@ body{padding-bottom:90px}
 .parc-top{background:#1a1a18;color:#fff;border-radius:12px;padding:13px 15px;margin:14px 0 12px;display:flex;justify-content:space-between}
 .parc-top-label{font-size:11px;color:#888780;margin-bottom:2px}
 .parc-top-val{font-size:18px;font-weight:700;color:#fff}
-.parc-card{background:#fff;border:.5px solid #e8e6e0;border-radius:12px;padding:13px 14px;margin-bottom:8px}
+.parc-card{background:#fff;border:.5px solid #e8e6e0;border-radius:12px;padding:13px 14px;margin-bottom:8px;transition:background .15s}
+.parc-card.pressing{background:#f0ede8;transform:scale(.98)}
 .parc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .parc-title{font-size:13px;font-weight:600;color:#1a1a18;flex:1}
 .parc-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:#E6F1FB;color:#0C447C;margin-left:8px}
@@ -133,6 +134,7 @@ body{padding-bottom:90px}
   .tab{color:#6b6a66}
   .tab.active{color:#f0ede8}
   .hist-item.pressing{background:#2e2e2b}
+  .parc-card.pressing{background:#2e2e2b}
   .sum-label,.section-label,.grp-label,.hist-meta,.cat-saldo,.cat-teto,.parc-stat-label,.parc-meta,.cycle-sub{color:#6b6a66}
 }
 </style>
@@ -469,6 +471,15 @@ function renderParc(){
         '<div class="del" data-ts="'+p.ts+'">×</div></div>'+
       '</div>';
     dc.querySelector('.del').addEventListener('click',function(){delP(parseInt(this.dataset.ts));});
+    // long press para editar
+    (function(parc,el){
+      var lp=null;
+      el.addEventListener('touchstart',function(){lp=setTimeout(function(){el.classList.add('pressing');openEditParc(parc);},600);},{passive:true});
+      el.addEventListener('touchend',function(){clearTimeout(lp);el.classList.remove('pressing');});
+      el.addEventListener('touchmove',function(){clearTimeout(lp);el.classList.remove('pressing');});
+      el.addEventListener('mousedown',function(){lp=setTimeout(function(){el.classList.add('pressing');openEditParc(parc);},600);});
+      el.addEventListener('mouseup',function(){clearTimeout(lp);el.classList.remove('pressing');});
+    })(p,dc);
     list.appendChild(dc);
   });
 }
@@ -496,6 +507,7 @@ function setTipo(t){
 }
 function openModal(){
   editTs=null;
+  editParcTs=null;
   document.getElementById('sh-title').textContent='Registrar gasto';
   document.getElementById('i-date').value=today();
   document.getElementById('i-pd').value=today();
@@ -523,7 +535,24 @@ function openEdit(g){
   document.getElementById('overlay').classList.add('open');
   setTimeout(function(){document.getElementById('i-val').focus();},300);
 }
-function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function closeModal(){document.getElementById('overlay').classList.remove('open');editTs=null;}
+
+var editParcTs=null;
+function openEditParc(p){
+  editParcTs=p.ts;
+  editTs=null;
+  document.getElementById('sh-title').textContent='Editar parcela';
+  document.getElementById('i-cat').value=p.cat;
+  document.getElementById('i-desc').value=p.desc||'';
+  document.getElementById('i-pessoa').value=p.pessoa||'familia';
+  document.getElementById('i-total').value=p.valorTotal;
+  document.getElementById('i-np').value=p.nparc;
+  document.getElementById('i-pd').value=p.startDate;
+  document.getElementById('err').style.display='none';
+  setTipo('parcelado');
+  updPreview();
+  document.getElementById('overlay').classList.add('open');
+}
 
 function updPreview(){
   var t=parseFloat(document.getElementById('i-total').value);
@@ -560,7 +589,15 @@ function save(){
     var n=parseInt(document.getElementById('i-np').value);
     var dt=document.getElementById('i-pd').value;
     if(!t||t<=0||!n||n<2||!dt){err.style.display='block';return;}
-    P.push({ts:Date.now(),cat:document.getElementById('i-cat').value,valorTotal:t,nparc:n,valorParcela:Math.round(t/n*100)/100,startDate:dt,pessoa:document.getElementById('i-pessoa').value,desc:document.getElementById('i-desc').value.trim()});
+    if(editParcTs){
+      P=P.map(function(p){
+        if(p.ts===editParcTs) return {ts:p.ts,cat:document.getElementById('i-cat').value,valorTotal:t,nparc:n,valorParcela:Math.round(t/n*100)/100,startDate:dt,pessoa:document.getElementById('i-pessoa').value,desc:document.getElementById('i-desc').value.trim()};
+        return p;
+      });
+      editParcTs=null;
+    }else{
+      P.push({ts:Date.now(),cat:document.getElementById('i-cat').value,valorTotal:t,nparc:n,valorParcela:Math.round(t/n*100)/100,startDate:dt,pessoa:document.getElementById('i-pessoa').value,desc:document.getElementById('i-desc').value.trim()});
+    }
   }
   err.style.display='none';
   saveAll();fbSave();closeModal();render();
