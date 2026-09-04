@@ -241,10 +241,10 @@ body{padding-bottom:90px}
 
 <!-- TELA: ANÁLISE -->
 <div id="pg-analise" style="display:none">
-  <!-- Seletor de mês -->
+  <!-- Botão voltar + Seletor de mês -->
   <div class="mes-sel-wrap">
+    <button onclick="goHome()" style="background:#1a1a18;color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;white-space:nowrap">← Início</button>
     <select class="mes-sel" id="mes-sel" onchange="onMesSel()"></select>
-    <div class="mes-atual-badge" id="mes-badge"></div>
   </div>
   <!-- Nota do mês -->
   <div id="nota-wrap"></div>
@@ -487,22 +487,30 @@ function calcNota(gastos,parcTotal){
 // ── SELETOR DE MÊS ──────────────────────────────────────
 function buildMesSel(){
   var sel=document.getElementById('mes-sel');
+  var valorAtual=mesSel||'';
   sel.innerHTML='';
   // Opção: mês atual (ciclo)
   var o=document.createElement('option');
   o.value='';o.textContent='Mês atual (ciclo do cartão)';
   sel.appendChild(o);
-  // Meses com dados
+  // Coletar meses com dados
   var meses={};
-  G.forEach(function(g){var k=g.date.substring(0,7);meses[k]=true;});
+  G.forEach(function(g){if(g&&g.date)meses[g.date.substring(0,7)]=true;});
   P.forEach(function(p){
+    if(!p||!p.startDate)return;
     var b=new Date(p.startDate+'T12:00:00');
     for(var i=0;i<p.nparc;i++){
       var vc=new Date(b.getFullYear(),b.getMonth()+i,b.getDate());
-      var k=vc.getFullYear()+'-'+p2(vc.getMonth()+1);
-      meses[k]=true;
+      meses[vc.getFullYear()+'-'+p2(vc.getMonth()+1)]=true;
     }
   });
+  // Sempre incluir os últimos 3 meses mesmo sem dados
+  var hoje=new Date();
+  for(var i=1;i<=3;i++){
+    var d=new Date(hoje.getFullYear(),hoje.getMonth()-i,1);
+    var k=d.getFullYear()+'-'+p2(d.getMonth()+1);
+    meses[k]=true;
+  }
   Object.keys(meses).sort(function(a,b){return b.localeCompare(a);}).forEach(function(k){
     var o2=document.createElement('option');
     o2.value=k;
@@ -511,7 +519,13 @@ function buildMesSel(){
     o2.textContent=nome.charAt(0).toUpperCase()+nome.slice(1);
     sel.appendChild(o2);
   });
-  sel.value=mesSel||'';
+  // Restaurar seleção
+  if(valorAtual&&sel.querySelector('option[value="'+valorAtual+'"]')){
+    sel.value=valorAtual;
+  }else{
+    sel.value='';
+    mesSel=null;
+  }
 }
 
 function onMesSel(){
@@ -535,11 +549,6 @@ function updateDays(){
 function render(){
   updateDays();
   buildMesSel();
-  // badge do mês
-  var iv=getInterval();
-  var badge=document.getElementById('mes-badge');
-  if(badge)badge.textContent=mesSel?'mês calendário':'ciclo '+fD(iv.i)+'→'+fD(iv.f);
-
   var gastos=getGastos();
   var gastosAtivos=gastos.filter(function(g){return !g.limbo;});
   var pv=getParcVig();
