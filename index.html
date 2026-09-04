@@ -188,7 +188,10 @@ body{padding-bottom:90px}
 <div class="header">
   <div class="header-row">
     <h1>Orçamento familiar</h1>
-    <div class="sync-dot" id="sdot"></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="openCfg()" style="background:none;border:1px solid #3a3a38;border-radius:8px;color:#888780;font-size:11px;padding:4px 8px;cursor:pointer">⚙ mês</button>
+      <div class="sync-dot" id="sdot"></div>
+    </div>
   </div>
   <div class="cycle-bar">
     <button class="cycle-btn" id="btn-thiago" onclick="setCycle('thiago')">Thiago<small id="days-thiago">dia 9→8</small></button>
@@ -224,6 +227,26 @@ body{padding-bottom:90px}
 </div>
 
 <button class="fab" id="fab">+</button>
+
+<div class="overlay" id="cfg-overlay">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h2>Configuração do mês</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.5">Os tetos são calculados automaticamente como % da sobra disponível (receita − fixos).</p>
+    <div class="field">
+      <label>Receita prevista (R$)</label>
+      <input type="number" id="cfg-receita" inputmode="numeric" placeholder="Ex: 17000">
+    </div>
+    <div class="field">
+      <label>Custos fixos do mês (R$)</label>
+      <input type="number" id="cfg-fixos" inputmode="numeric" placeholder="Ex: 11096">
+    </div>
+    <div id="cfg-preview" style="background:#f4f3ef;border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:13px">
+      Sobra para variáveis: <strong id="cfg-sobra">—</strong>
+    </div>
+    <button class="btn-save" id="cfg-save">Aplicar</button>
+  </div>
+</div>
 
 <div class="overlay" id="overlay">
   <div class="sheet">
@@ -278,22 +301,59 @@ body{padding-bottom:90px}
 </div>
 
 <script>
+// Percentuais fixos por categoria (soma = 100%)
+var PCTS={
+  mercado:    0.30,
+  feira:      0.09,
+  padaria:    0.03,
+  ifood:      0.03,
+  comida_rua: 0.10,
+  uber:       0.12,
+  lazer:      0.04,
+  julia:      0.12,
+  outros:     0.03,
+  parcelas:   0.00, // controlado separado
+  assinaturas:0.04,
+  farmacia:   0.06,
+  transporte: 0.04,
+};
+
+// Configuração mensal — editável pelo usuário
+var CFG_KEY='orcfam_config';
+function loadCfg(){
+  try{return JSON.parse(localStorage.getItem(CFG_KEY)||'{}');}catch(e){return {};}
+}
+function saveCfg(cfg){
+  try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg));}catch(e){}
+}
+var CFG=loadCfg();
+// Defaults
+if(!CFG.receita)CFG.receita=24000;
+if(!CFG.fixos)CFG.fixos=11096;
+
+function getSobra(){return Math.max(0,CFG.receita-CFG.fixos);}
+function getTeto(id){
+  var sobra=getSobra();
+  if(id==='parcelas')return 600; // teto fixo para parcelas
+  return Math.round(sobra*(PCTS[id]||0));
+}
+
 var C=[
-  {id:'mercado',    name:'Mercado + Hortifruti',              teto:2200,cor:'#1D9E75'},
-  {id:'feira',      name:'Feira livre',                       teto:700, cor:'#639922'},
-  {id:'padaria',    name:'Padaria',                           teto:300, cor:'#BA7517'},
-  {id:'ifood',      name:'Delivery (iFood, Zé Delivery...)',  teto:500, cor:'#D85A30'},
-  {id:'comida_rua', name:'Comida na rua',                     teto:800, cor:'#D4537E'},
-  {id:'uber',       name:'Uber / 99',                         teto:1000,cor:'#378ADD'},
-  {id:'lazer',      name:'Saídas (restaurante, cinema, show)',teto:600, cor:'#7F77DD'},
-  {id:'julia',      name:'Júlia',                             teto:800, cor:'#993556'},
-  {id:'outros',     name:'Outros',                            teto:500, cor:'#888780'},
-  {id:'parcelas',   name:'Compras parceladas',                teto:600, cor:'#1a6fbd'},
-  {id:'assinaturas',name:'Assinaturas',                       teto:250, cor:'#5F5E5A'},
-  {id:'farmacia',   name:'Farmácia',                          teto:400, cor:'#E24B4A'},
-  {id:'transporte', name:'Transporte (ônibus, gasolina)',      teto:300, cor:'#BA7517'}
+  {id:'mercado',    name:'Mercado + Hortifruti',              cor:'#1D9E75'},
+  {id:'feira',      name:'Feira livre',                       cor:'#639922'},
+  {id:'padaria',    name:'Padaria',                           cor:'#BA7517'},
+  {id:'ifood',      name:'Delivery (iFood, Zé Delivery...)',  cor:'#D85A30'},
+  {id:'comida_rua', name:'Comida na rua',                     cor:'#D4537E'},
+  {id:'uber',       name:'Uber / 99',                         cor:'#378ADD'},
+  {id:'lazer',      name:'Saídas (restaurante, cinema, show)',cor:'#7F77DD'},
+  {id:'julia',      name:'Júlia',                             cor:'#993556'},
+  {id:'outros',     name:'Outros',                            cor:'#888780'},
+  {id:'parcelas',   name:'Compras parceladas',                cor:'#1a6fbd'},
+  {id:'assinaturas',name:'Assinaturas',                       cor:'#5F5E5A'},
+  {id:'farmacia',   name:'Farmácia',                          cor:'#E24B4A'},
+  {id:'transporte', name:'Transporte (ônibus, gasolina)',      cor:'#BA7517'}
 ];
-var TT=C.reduce(function(s,c){return s+c.teto;},0);
+function TT(){return C.reduce(function(s,c){return s+getTeto(c.id);},0);}
 var cycle='familia',tab='tetos',tipo='avulso';
 var G=[],P=[],HM=[],db=null;
 var editTs=null,editParcTs=null;
@@ -429,14 +489,14 @@ function render(){
 function renderSummary(){
   var lista=gastosComLimbo().filter(function(g){return !g.limbo;});
   var total=lista.reduce(function(s,g){return s+g.val;},0)+parcVigsTotal();
-  var saldo=TT-total;
-  var over=C.filter(function(c){return spent(c.id)>=c.teto;}).length;
-  var cg=total>TT?'bad':total>TT*.8?'warn':'';
-  var cs=saldo<0?'bad':saldo<TT*.15?'warn':'ok';
+  var saldo=TT()-total;
+  var over=C.filter(function(c){return spent(c.id)>=getTeto(c.id);}).length;
+  var cg=total>TT()?'bad':total>TT()*.8?'warn':'';
+  var cs=saldo<0?'bad':saldo<TT()*.15?'warn':'ok';
   document.getElementById('summary').innerHTML=
     sc('Gasto no ciclo',fB(total),cg)+
     sc('Saldo disponível',(saldo<0?'- ':'')+fB(saldo),cs)+
-    sc('Teto total',fB(TT),'')+
+    sc('Teto total',fB(TT()),'')+
     sc('Estouradas',''+over,over>0?'bad':'ok');
 }
 function sc(l,v,cls){return '<div class="sum-card"><div class="sum-label">'+l+'</div><div class="sum-val '+cls+'">'+v+'</div></div>';}
@@ -450,8 +510,8 @@ function renderFuturo(){
 function renderCats(){
   var el=document.getElementById('cats');el.innerHTML='';
   C.forEach(function(c){
-    var sp=spent(c.id),pct=Math.min(100,Math.round(sp/c.teto*100));
-    var over=sp>c.teto,sl=c.teto-sp;
+    var sp=spent(c.id),t=getTeto(c.id),pct=t>0?Math.min(100,Math.round(sp/t*100)):0;
+    var over=sp>t,sl=t-sp;
     var bCor=barColor(pct);
     var txt=over?'⚠ Estourou '+fB(Math.abs(sl)):sl>0?'Saldo: '+fB(sl)+' ('+pct+'% usado)':'No limite';
     var d=document.createElement('div');d.className='cat-card';
@@ -875,6 +935,20 @@ function fbSave(){
   if(!db)return;sdot('syncing');
   Promise.all([db.ref('g').set(G),db.ref('p').set(P)]).then(function(){sdot('');}).catch(function(){sdot('error');});
 }
+function openCfg(){
+  document.getElementById('cfg-receita').value=CFG.receita||'';
+  document.getElementById('cfg-fixos').value=CFG.fixos||'';
+  updCfgPreview();
+  document.getElementById('cfg-overlay').classList.add('open');
+}
+function closeCfg(){document.getElementById('cfg-overlay').classList.remove('open');}
+function updCfgPreview(){
+  var r=parseFloat(document.getElementById('cfg-receita').value)||0;
+  var f=parseFloat(document.getElementById('cfg-fixos').value)||0;
+  var s=Math.max(0,r-f);
+  document.getElementById('cfg-sobra').textContent='R$ '+Math.round(s).toLocaleString('pt-BR');
+}
+
 function initFB(){
   var s1=document.createElement('script');
   s1.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
@@ -921,6 +995,14 @@ function populateCat(){
 // ── INIT ──────────────────────────────────────────────
 loadAll();populateCat();updateDaysLabel();render();
 document.getElementById('fab').addEventListener('click',openModal);
+document.getElementById('cfg-overlay').addEventListener('click',function(e){if(e.target===this)closeCfg();});
+document.getElementById('cfg-save').addEventListener('click',function(){
+  var r=parseFloat(document.getElementById('cfg-receita').value);
+  var f=parseFloat(document.getElementById('cfg-fixos').value);
+  if(r>0&&f>=0){CFG.receita=r;CFG.fixos=f;saveCfg(CFG);closeCfg();render();}
+});
+document.getElementById('cfg-receita').addEventListener('input',updCfgPreview);
+document.getElementById('cfg-fixos').addEventListener('input',updCfgPreview);
 document.getElementById('btn-save').addEventListener('click',save);
 document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.getElementById('cp-close').addEventListener('click',closeCatPanel);
