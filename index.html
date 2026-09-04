@@ -248,6 +248,8 @@ body{padding-bottom:90px}
   </div>
   <!-- Nota do mês -->
   <div id="nota-wrap"></div>
+  <!-- Info financeira do mês -->
+  <div id="mes-info-wrap"></div>
   <!-- Summary -->
   <div class="summary" id="summary"></div>
   <!-- Futuro (só no mês atual) -->
@@ -367,10 +369,39 @@ var C=[
 // ── CONFIG MENSAL ───────────────────────────────────────
 var CFG_KEY='orcfam_cfg2';
 var CFG=JSON.parse(localStorage.getItem(CFG_KEY)||'{"receita":24000,"fixos":11096}');
+
+var CFG_MESES = {
+  '2026-01': {receita:23336, fixos:12127},
+  '2026-02': {receita:21747, fixos:11586},
+  '2026-03': {receita:24243, fixos:12150},
+  '2026-04': {receita:23163, fixos:12343},
+  '2026-05': {receita:26234, fixos:11937},
+  '2026-06': {receita:24512, fixos:12055},
+  '2026-07': {receita:24242, fixos:12123},
+  '2026-08': {receita:24100, fixos:12246},
+  '2026-09': {receita:22744, fixos:11519},
+  '2026-10': {receita:17613, fixos:10475},
+};
+// Retorna config do mês selecionado ou config atual
+function getCfgMes(mesKey) {
+  if(mesKey && CFG_MESES[mesKey]) return CFG_MESES[mesKey];
+  return CFG;
+}
+function getSobraMes(mesKey) {
+  var cfg = getCfgMes(mesKey);
+  return Math.max(0, cfg.receita - cfg.fixos);
+}
+function getTetoPorMes(id, mesKey) {
+  if(id === 'parcelas') return 600;
+  return Math.round(getSobraMes(mesKey) * (PCTS[id]||0));
+}
+function TTMes(mesKey) {
+  return C.reduce(function(s,c){return s+getTetoPorMes(c.id,mesKey);},0);
+}
 function saveCfg(){localStorage.setItem(CFG_KEY,JSON.stringify(CFG));}
-function getSobra(){return Math.max(0,CFG.receita-CFG.fixos);}
-function getTeto(id){return id==='parcelas'?600:Math.round(getSobra()*(PCTS[id]||0));}
-function TT(){return C.reduce(function(s,c){return s+getTeto(c.id);},0);}
+function getSobra(){return getSobraMes(mesSel);}
+function getTeto(id){return getTetoPorMes(id, mesSel);}
+function TT(){return TTMes(mesSel);}
 
 // ── ESTADO ──────────────────────────────────────────────
 var cycle='familia', aTab='tetos', pg='home';
@@ -473,13 +504,16 @@ function spentCat(id){
 
 // ── NOTA CFO ────────────────────────────────────────────
 function calcNota(gastos,parcTotal){
+  var ttMes=TT();
   var totalGasto=gastos.reduce(function(s,g){return s+g.val;},0)+parcTotal;
-  var pctTeto=TT()>0?totalGasto/TT():0;
+  var pctTeto=ttMes>0?totalGasto/ttMes:0;
   var nota=10;
   if(pctTeto>1)nota-=Math.min(4,(pctTeto-1)*10);
   var estouradas=C.filter(function(c){return spentCat(c.id)>=getTeto(c.id)&&getTeto(c.id)>0;}).length;
   nota-=estouradas*0.5;
-  if(parcTotal>TT()*0.2)nota-=1;
+  if(parcTotal>ttMes*0.2)nota-=1;
+  // Bônus por sobra positiva
+  if(pctTeto<0.8)nota=Math.min(10,nota+0.5);
   nota=Math.max(0,Math.min(10,nota));
   return Math.round(nota*10)/10;
 }
@@ -569,6 +603,27 @@ function render(){
   var nota=calcNota(gastosAtivos,pv.total);
   var nc=nota>=8?'a':nota>=6?'b':nota>=4?'c':'d';
   var nlbl=nota>=8?'Excelente':nota>=6?'Bom':nota>=4?'Regular':'Crítico';
+  // Info financeira do mês
+  var cfgMes=getCfgMes(mesSel);
+  var sobraMes=getSobraMes(mesSel);
+  var infoEl=document.getElementById('mes-info-wrap');
+  if(infoEl){
+    infoEl.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:0 14px 6px">'+
+      '<div style="background:#fff;border-radius:10px;border:.5px solid #e8e6e0;padding:8px 10px;text-align:center">'+
+        '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Receita</div>'+
+        '<div style="font-size:13px;font-weight:600;color:#27500A">'+fB(cfgMes.receita)+'</div>'+
+      '</div>'+
+      '<div style="background:#fff;border-radius:10px;border:.5px solid #e8e6e0;padding:8px 10px;text-align:center">'+
+        '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Fixos</div>'+
+        '<div style="font-size:13px;font-weight:600;color:#A32D2D">'+fB(cfgMes.fixos)+'</div>'+
+      '</div>'+
+      '<div style="background:#fff;border-radius:10px;border:.5px solid #e8e6e0;padding:8px 10px;text-align:center">'+
+        '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Sobra</div>'+
+        '<div style="font-size:13px;font-weight:600;color:'+(sobraMes>0?'#27500A':'#A32D2D')+'">'+fB(sobraMes)+'</div>'+
+      '</div>'+
+    '</div>';
+  }
+
   document.getElementById('nota-wrap').innerHTML=
     '<div class="nota-banner '+nc+'">'+
       '<div class="nota-label '+nc+'">Nota do mês: '+nlbl+'</div>'+
