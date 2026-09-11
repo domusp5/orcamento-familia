@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Orçamento">
-<title>Orçamento Familiar</title>
+<title>Sob Controle</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f3ef;color:#1a1a18}
@@ -206,7 +206,7 @@ body{padding-bottom:90px}
 <!-- HEADER fixo em todas as telas -->
 <div class="header">
   <div class="header-row">
-    <h1>Orçamento familiar</h1>
+    <h1>Sob Controle</h1>
     <div class="header-right">
       <button class="cfg-btn" onclick="openCfg()">⚙ mês</button>
       <div class="sync-dot" id="sdot"></div>
@@ -259,6 +259,7 @@ body{padding-bottom:90px}
     <button class="tab active" id="atab-tetos"    onclick="goATab('tetos',this)">Tetos</button>
     <button class="tab"        id="atab-historico" onclick="goATab('historico',this)">Histórico</button>
     <button class="tab"        id="atab-parcelas"  onclick="goATab('parcelas',this)">Parcelas</button>
+    <button class="tab"        id="atab-receitas"  onclick="goATab('receitas',this)">Receitas</button>
   </div>
   <div id="apg-tetos">
     <div class="section-label">Por categoria</div>
@@ -272,6 +273,13 @@ body{padding-bottom:90px}
       <div class="section-label">Compras parceladas</div>
       <div id="parc-list"></div>
     </div>
+  </div>
+  <div id="apg-receitas" style="display:none">
+    <div style="padding:12px 14px 4px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.8px">Receitas por mês</div>
+      <div style="font-size:11px;color:#888">consumo → pagamento no mês seguinte</div>
+    </div>
+    <div id="receitas-list" style="padding:0 14px"></div>
   </div>
 </div>
 
@@ -316,6 +324,21 @@ body{padding-bottom:90px}
 </div>
 
 <!-- MODAL: configuração do mês -->
+<div class="overlay" id="cfg-mes-overlay">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h2 id="cfg-mes-titulo">Editar mês</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.5">Receita e fixos do mês de <strong>pagamento</strong> (mês seguinte ao consumo).</p>
+    <input type="hidden" id="cfg-mes-key">
+    <div class="field"><label>Receita prevista (R$)</label><input type="number" id="cfg-mes-r" inputmode="numeric"></div>
+    <div class="field"><label>Custos fixos (R$)</label><input type="number" id="cfg-mes-f" inputmode="numeric"></div>
+    <div style="background:#f4f3ef;border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:13px">
+      Sobra para variáveis: <strong id="cfg-mes-sobra">—</strong>
+    </div>
+    <button class="btn-save" id="cfg-mes-save">Aplicar</button>
+  </div>
+</div>
+
 <div class="overlay" id="cfg-overlay">
   <div class="sheet">
     <div class="handle"></div>
@@ -370,17 +393,19 @@ var C=[
 var CFG_KEY='orcfam_cfg2';
 var CFG=JSON.parse(localStorage.getItem(CFG_KEY)||'{"receita":24000,"fixos":11096}');
 
+// CFG_MESES: chave = mês de CONSUMO, valor = receita+fixos do mês SEGUINTE (mês de pagamento)
+// Ex: consumo de janeiro é pago com a receita de fevereiro
 var CFG_MESES = {
-  '2026-01': {receita:23336, fixos:12127},
-  '2026-02': {receita:21747, fixos:11586},
-  '2026-03': {receita:24243, fixos:12150},
-  '2026-04': {receita:23163, fixos:12343},
-  '2026-05': {receita:26234, fixos:11937},
-  '2026-06': {receita:24512, fixos:12055},
-  '2026-07': {receita:24242, fixos:12123},
-  '2026-08': {receita:24100, fixos:12246},
-  '2026-09': {receita:22744, fixos:11519},
-  '2026-10': {receita:17613, fixos:10475},
+  '2026-01': {receita:21747, fixos:11586, label:'pago em fev/26'},
+  '2026-02': {receita:24243, fixos:12150, label:'pago em mar/26'},
+  '2026-03': {receita:23163, fixos:12343, label:'pago em abr/26'},
+  '2026-04': {receita:26234, fixos:11937, label:'pago em mai/26'},
+  '2026-05': {receita:24512, fixos:12055, label:'pago em jun/26'},
+  '2026-06': {receita:24242, fixos:12123, label:'pago em jul/26'},
+  '2026-07': {receita:24100, fixos:12246, label:'pago em ago/26'},
+  '2026-08': {receita:22744, fixos:11519, label:'pago em set/26'},
+  '2026-09': {receita:17613, fixos:10475, label:'pago em out/26'},
+  '2026-10': {receita:CFG.receita, fixos:CFG.fixos, label:'pago em nov/26'},
 };
 // Retorna config do mês selecionado ou config atual
 function getCfgMes(mesKey) {
@@ -659,6 +684,7 @@ function render(){
 
   if(aTab==='historico')renderHist(gastos);
   if(aTab==='parcelas')renderParc(pv);
+  if(aTab==='receitas')renderReceitas();
 }
 
 function sc(l,v,cls){return '<div class="sum-card"><div class="sum-label">'+l+'</div><div class="sum-val '+cls+'">'+v+'</div></div>';}
@@ -808,8 +834,94 @@ function goATab(t,el){
   aTab=t;
   document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
   el.classList.add('active');
-  ['tetos','historico','parcelas'].forEach(function(x){document.getElementById('apg-'+x).style.display=x===t?'block':'none';});
+  ['tetos','historico','parcelas','receitas'].forEach(function(x){document.getElementById('apg-'+x).style.display=x===t?'block':'none';});
   render();
+}
+
+function renderReceitas(){
+  var wrap=document.getElementById('receitas-list');
+  if(!wrap)return;
+  wrap.innerHTML='';
+
+  // Meses em ordem decrescente
+  var mesesKeys=Object.keys(CFG_MESES).sort(function(a,b){return b.localeCompare(a);});
+
+  mesesKeys.forEach(function(k){
+    var cfg=CFG_MESES[k];
+    var d=new Date(k+'-15');
+    var nomeMes=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    nomeMes=nomeMes.charAt(0).toUpperCase()+nomeMes.slice(1);
+
+    // Calcular consumo real do mês (calendário 1-31)
+    var parts=k.split('-');
+    var ano=parseInt(parts[0]),mes=parseInt(parts[1])-1;
+    var ini=new Date(ano,mes,1),fim=new Date(ano,mes+1,0,23,59,59);
+    var gastosMes=G.filter(function(g){
+      var gd=new Date(g.date+'T12:00:00');
+      return gd>=ini&&gd<=fim;
+    });
+    var consumo=gastosMes.reduce(function(s,g){return s+g.val;},0);
+
+    // Parcelas vigentes no mês
+    var pvMes=[];
+    P.forEach(function(p){
+      var b=new Date(p.startDate+'T12:00:00');
+      for(var i=0;i<p.nparc;i++){
+        var vc=new Date(b.getFullYear(),b.getMonth()+i,b.getDate());
+        if(vc>=ini&&vc<=fim)pvMes.push(p.valorParcela);
+      }
+    });
+    consumo+=pvMes.reduce(function(s,v){return s+v;},0);
+
+    var sobra=Math.max(0,cfg.receita-cfg.fixos);
+    var saldoLivre=sobra-consumo;
+    var pctUsado=sobra>0?Math.min(100,Math.round(consumo/sobra*100)):0;
+
+    var card=document.createElement('div');
+    card.style.cssText='background:#fff;border:.5px solid #e8e6e0;border-radius:12px;padding:13px 14px;margin-bottom:10px';
+
+    // Header do card
+    var isAtual=(k===mesSel||(mesSel===null&&k===new Date().getFullYear()+'-'+(new Date().getMonth()<9?'0':'')+(new Date().getMonth()+1)));
+    card.innerHTML=
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'+
+        '<div>'+
+          '<div style="font-size:13px;font-weight:600;color:#1a1a18">'+nomeMes+'</div>'+
+          '<div style="font-size:10px;color:#888;margin-top:2px">'+cfg.label+'</div>'+
+        '</div>'+
+        '<button onclick="openCfgMes(''+k+'')" style="background:none;border:1px solid #e8e6e0;border-radius:8px;color:#888;font-size:11px;padding:4px 8px;cursor:pointer">editar</button>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">'+
+        '<div style="background:#f4f3ef;border-radius:8px;padding:8px;text-align:center">'+
+          '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Receita</div>'+
+          '<div style="font-size:13px;font-weight:600;color:#27500A">'+fB(cfg.receita)+'</div>'+
+        '</div>'+
+        '<div style="background:#f4f3ef;border-radius:8px;padding:8px;text-align:center">'+
+          '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Fixos</div>'+
+          '<div style="font-size:13px;font-weight:600;color:#A32D2D">'+fB(cfg.fixos)+'</div>'+
+        '</div>'+
+        '<div style="background:#f4f3ef;border-radius:8px;padding:8px;text-align:center">'+
+          '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Sobra</div>'+
+          '<div style="font-size:13px;font-weight:600;color:'+(sobra>0?'#27500A':'#A32D2D')+'">'+fB(sobra)+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
+        '<div style="background:#f4f3ef;border-radius:8px;padding:8px;text-align:center">'+
+          '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Consumo real</div>'+
+          '<div style="font-size:13px;font-weight:600;color:'+(consumo>sobra?'#A32D2D':'#1a1a18')+'">'+fB(consumo)+'</div>'+
+        '</div>'+
+        '<div style="background:#f4f3ef;border-radius:8px;padding:8px;text-align:center">'+
+          '<div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">Saldo livre</div>'+
+          '<div style="font-size:13px;font-weight:600;color:'+(saldoLivre>=0?'#27500A':'#A32D2D')+'">'+(saldoLivre<0?'- ':'')+fB(Math.abs(saldoLivre))+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="margin-top:10px">'+
+        '<div style="height:4px;border-radius:2px;background:#e8e6e0;overflow:hidden">'+
+          '<div style="height:100%;border-radius:2px;width:'+pctUsado+'%;background:'+(pctUsado>100?'#A32D2D':pctUsado>80?'#D85A30':'#378ADD')+'"></div>'+
+        '</div>'+
+        '<div style="font-size:10px;color:#555;margin-top:4px">'+pctUsado+'% da sobra consumido</div>'+
+      '</div>';
+    wrap.appendChild(card);
+  });
 }
 
 // ── MODAL ───────────────────────────────────────────────
@@ -988,9 +1100,57 @@ function populateCat(){
 
 // ── INIT ────────────────────────────────────────────────
 loadAll();populateCat();updateDays();
+// Carregar overrides de CFG_MESES do localStorage
+try{
+  var ovr=JSON.parse(localStorage.getItem('cfgMesesOverride')||'{}');
+  Object.keys(ovr).forEach(function(k){
+    if(!CFG_MESES[k])CFG_MESES[k]={label:'configurado'};
+    CFG_MESES[k].receita=ovr[k].receita;
+    CFG_MESES[k].fixos=ovr[k].fixos;
+  });
+}catch(e){}
 
 // Event listeners
 document.getElementById('fab').addEventListener('click',openModal);
+
+function openCfgMes(k){
+  var cfg=CFG_MESES[k]||{receita:0,fixos:0};
+  var d=new Date(k+'-15');
+  var nome=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  document.getElementById('cfg-mes-titulo').textContent='Editar '+nome.charAt(0).toUpperCase()+nome.slice(1);
+  document.getElementById('cfg-mes-key').value=k;
+  document.getElementById('cfg-mes-r').value=cfg.receita||'';
+  document.getElementById('cfg-mes-f').value=cfg.fixos||'';
+  updCfgMesPrev();
+  document.getElementById('cfg-mes-overlay').classList.add('open');
+}
+function closeCfgMes(){document.getElementById('cfg-mes-overlay').classList.remove('open');}
+function updCfgMesPrev(){
+  var r=parseFloat(document.getElementById('cfg-mes-r').value)||0;
+  var f=parseFloat(document.getElementById('cfg-mes-f').value)||0;
+  document.getElementById('cfg-mes-sobra').textContent='R$ '+Math.round(Math.max(0,r-f)).toLocaleString('pt-BR');
+}
+document.getElementById('cfg-mes-overlay').addEventListener('click',function(e){if(e.target===this)closeCfgMes();});
+document.getElementById('cfg-mes-r').addEventListener('input',updCfgMesPrev);
+document.getElementById('cfg-mes-f').addEventListener('input',updCfgMesPrev);
+document.getElementById('cfg-mes-save').addEventListener('click',function(){
+  var k=document.getElementById('cfg-mes-key').value;
+  var r=parseFloat(document.getElementById('cfg-mes-r').value);
+  var f=parseFloat(document.getElementById('cfg-mes-f').value);
+  if(k&&r>0&&f>=0){
+    if(!CFG_MESES[k])CFG_MESES[k]={label:'configurado'};
+    CFG_MESES[k].receita=r;
+    CFG_MESES[k].fixos=f;
+    // Salvar no localStorage
+    try{
+      var stored=JSON.parse(localStorage.getItem('cfgMesesOverride')||'{}');
+      stored[k]={receita:r,fixos:f};
+      localStorage.setItem('cfgMesesOverride',JSON.stringify(stored));
+    }catch(e){}
+    closeCfgMes();
+    render();
+  }
+});
 document.getElementById('btn-save').addEventListener('click',save);
 document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.getElementById('cfg-overlay').addEventListener('click',function(e){if(e.target===this)closeCfg();});
