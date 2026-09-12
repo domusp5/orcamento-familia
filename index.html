@@ -405,11 +405,16 @@ var CFG_MESES = {
   '2026-07': {receita:24100, fixos:12246, label:'pago em ago/26'},
   '2026-08': {receita:22744, fixos:11519, label:'pago em set/26'},
   '2026-09': {receita:17613, fixos:10475, label:'pago em out/26'},
-  '2026-10': {receita:CFG.receita, fixos:CFG.fixos, label:'pago em nov/26'},
+  '2026-10': {receita:17613, fixos:10475, label:'pago em nov/26'},
 };
 // Retorna config do mês selecionado ou config atual
 function getCfgMes(mesKey) {
   if(mesKey && CFG_MESES[mesKey]) return CFG_MESES[mesKey];
+  // Mês atual: usar o mês seguinte como referência
+  var hoje = new Date();
+  var proxMes = new Date(hoje.getFullYear(), hoje.getMonth()+1, 1);
+  var proxKey = proxMes.getFullYear()+'-'+(proxMes.getMonth()<9?'0':'')+(proxMes.getMonth()+1);
+  if(CFG_MESES[proxKey]) return CFG_MESES[proxKey];
   return CFG;
 }
 function getSobraMes(mesKey) {
@@ -685,7 +690,7 @@ function render(){
   if(aTab==='historico')renderHist(gastos);
   if(aTab==='parcelas')renderParc(pv);
   if(aTab==='receitas')renderReceitas();
-}
+}catch(e){console.error('render error:',e);}}
 
 function sc(l,v,cls){return '<div class="sum-card"><div class="sum-label">'+l+'</div><div class="sum-val '+cls+'">'+v+'</div></div>';}
 
@@ -1014,7 +1019,7 @@ function save(){
   saveAll();fbSave();closeModal();
   if(pg==='analise')render();
   // Voltar para home após lançamento
-  setTimeout(function(){goHome();},300);
+  try{setTimeout(function(){goHome();},300);}catch(e){}
 }
 function delG(ts){if(!confirm('Remover?'))return;G=G.filter(function(g){return g.ts!==ts;});saveAll();fbSave();render();}
 function delP(ts){if(!confirm('Remover?'))return;P=P.filter(function(p){return p.ts!==ts;});saveAll();fbSave();render();}
@@ -1090,6 +1095,7 @@ function initFB(){
     s2.onerror=function(){sdot('error');};document.head.appendChild(s2);
   };
   s1.onerror=function(){sdot('error');};document.head.appendChild(s1);
+  }catch(e){sdot('error');console.error('Firebase init error:',e);}
 }
 
 // ── SELECT DE CATEGORIAS ────────────────────────────────
