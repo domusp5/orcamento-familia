@@ -140,6 +140,14 @@ body{padding-bottom:90px}
 .cat-panel-total-val{font-size:16px;font-weight:700;color:#1a1a18}
 .empty{text-align:center;padding:40px 20px;color:#555;font-size:14px}
 .rec-card{background:#fff;border:.5px solid #e8e6e0;border-radius:12px;padding:13px 14px;margin-bottom:10px}
+.mes-ano-btn{padding:6px 12px;border-radius:20px;border:1.5px solid #e8e6e0;background:#fff;color:#555;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.mes-ano-btn.active{background:#1a1a18;color:#fff;border-color:#1a1a18}
+.mes-cel{padding:8px 4px;border-radius:10px;border:1.5px solid #e8e6e0;background:#fff;color:#1a1a18;font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
+.mes-cel:active{opacity:.7}
+.mes-cel.active{background:#1a1a18;color:#fff;border-color:#1a1a18;font-weight:700}
+.mes-cel.atual{border-color:#378ADD;color:#378ADD}
+.mes-cel.atual.active{background:#378ADD;color:#fff;border-color:#378ADD}
+.mes-cel.sem-dados{opacity:.4}
 .mini-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
 .mini-grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
 .mini-cell{background:#f4f3ef;border-radius:8px;padding:8px;text-align:center}
@@ -169,6 +177,12 @@ body{padding-bottom:90px}
   .edit-btn{background:#0d2540;border-color:#1a4070;color:#7ab8f5}
   .mini-cell{background:#2a2a28}
   .cfg-btn{border-color:#2e2e2b}
+  .mes-ano-btn{background:#1e1e1c;border-color:#2e2e2b;color:#888}
+  .mes-ano-btn.active{background:#f0ede8;color:#1a1a18;border-color:#f0ede8}
+  .mes-cel{background:#1e1e1c;border-color:#2e2e2b;color:#f0ede8}
+  .mes-cel.active{background:#f0ede8;color:#1a1a18;border-color:#f0ede8}
+  .mes-cel.atual{border-color:#378ADD;color:#7ab8f5}
+  .mes-cel.atual.active{background:#378ADD;color:#fff}
 }
 </style>
 </head>
@@ -200,7 +214,7 @@ body{padding-bottom:90px}
         <span class="home-btn-desc">Registrar gasto ou compra parcelada</span>
       </button>
       <button class="home-btn btn-anal" id="btn-home-anal">
-        <span class="home-btn-icon">&#128202;</span>
+        <span class="home-btn-icon" style="font-size:28px;font-style:normal">&#9783;</span>
         <span class="home-btn-label">An&#225;lise</span>
         <span class="home-btn-desc">Ver tetos, hist&#243;rico e nota do m&#234;s</span>
       </button>
@@ -209,9 +223,14 @@ body{padding-bottom:90px}
 </div>
 
 <div id="pg-analise" style="display:none">
-  <div class="mes-sel-wrap">
-    <button id="btn-voltar" style="background:#1a1a18;color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;white-space:nowrap">&#8592; In&#237;cio</button>
-    <select class="mes-sel" id="mes-sel"></select>
+  <div style="padding:10px 14px 4px;display:flex;align-items:center;gap:8px">
+    <button id="btn-voltar" style="background:#1a1a18;color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0">&#8592; In&#237;cio</button>
+    <div id="mes-atual-label" style="font-size:12px;color:#888;flex:1;text-align:right"></div>
+  </div>
+  <!-- Grid seletor de mês -->
+  <div id="mes-grid-wrap" style="padding:0 14px 8px">
+    <div id="mes-grid-anos" style="display:flex;gap:6px;margin-bottom:8px;overflow-x:auto;padding-bottom:2px"></div>
+    <div id="mes-grid-meses" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div>
   </div>
   <div id="nota-wrap"></div>
   <div id="mes-info-wrap"></div>
@@ -314,21 +333,20 @@ body{padding-bottom:90px}
 
 <script>
 // ── DADOS BASE ──────────────────────────────────────────
-var PCTS = {mercado:.30,feira:.09,padaria:.03,ifood:.03,comida_rua:.10,uber:.12,lazer:.04,julia:.12,outros:.03,parcelas:0,assinaturas:.04,farmacia:.06,transporte:.04};
+var PCTS = {mercado:.30,feira:.09,padaria:.03,ifood:.03,comida_rua:.10,uber:.12,lazer:.04,julia:.12,outros:.03,parcelas:0,farmacia:.06,transporte:.04};
 var C = [
   {id:'mercado',    name:'Mercado + Hortifruti', cor:'#1D9E75'},
   {id:'feira',      name:'Feira livre',           cor:'#639922'},
   {id:'padaria',    name:'Padaria',               cor:'#BA7517'},
-  {id:'ifood',      name:'Delivery',              cor:'#D85A30'},
   {id:'comida_rua', name:'Comida na rua',         cor:'#D4537E'},
-  {id:'uber',       name:'Uber / 99',             cor:'#378ADD'},
-  {id:'lazer',      name:'Sa\u00EDdas',           cor:'#7F77DD'},
-  {id:'julia',      name:'J\u00FAlia',            cor:'#993556'},
-  {id:'outros',     name:'Outros',                cor:'#888780'},
-  {id:'parcelas',   name:'Compras parceladas',    cor:'#1a6fbd'},
-  {id:'assinaturas',name:'Assinaturas',           cor:'#5F5E5A'},
   {id:'farmacia',   name:'Farm\u00E1cia',         cor:'#E24B4A'},
-  {id:'transporte', name:'Transporte',            cor:'#BA7517'}
+  {id:'julia',      name:'J\u00FAlia',            cor:'#993556'},
+  {id:'ifood',      name:'Delivery',              cor:'#D85A30'},
+  {id:'lazer',      name:'Sa\u00EDdas',           cor:'#7F77DD'},
+  {id:'uber',       name:'Uber / 99',             cor:'#378ADD'},
+  {id:'transporte', name:'Transporte',            cor:'#BA7517'},
+  {id:'parcelas',   name:'Compras parceladas',    cor:'#1a6fbd'},
+  {id:'outros',     name:'Outros',                cor:'#888780'}
 ];
 
 // CFG_MESES: chave = mês de CONSUMO, valor = receita+fixos do mês SEGUINTE (pagamento)
@@ -451,10 +469,10 @@ function calcNota(gastos,parcTotal){
 }
 
 // ── SELETOR DE MÊS ──────────────────────────────────────
-function buildMesSel(){
-  var sel=document.getElementById('mes-sel'),val=mesSel||'';
-  sel.innerHTML='';
-  var o=document.createElement('option');o.value='';o.textContent='M\u00EAs atual (ciclo do cart\u00E3o)';sel.appendChild(o);
+var _anoSel = null;
+var MESES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function getMesesComDados(){
   var meses={};
   G.forEach(function(g){if(g&&g.date)meses[g.date.substring(0,7)]=true;});
   P.forEach(function(p){
@@ -462,15 +480,59 @@ function buildMesSel(){
     var b=new Date(p.startDate+'T12:00:00');
     for(var i=0;i<p.nparc;i++){var vc=new Date(b.getFullYear(),b.getMonth()+i,b.getDate());meses[vc.getFullYear()+'-'+p2(vc.getMonth()+1)]=true;}
   });
-  var hoje=new Date();
-  for(var i=1;i<=6;i++){var d=new Date(hoje.getFullYear(),hoje.getMonth()-i,1);meses[d.getFullYear()+'-'+p2(d.getMonth()+1)]=true;}
-  Object.keys(meses).sort(function(a,b){return b.localeCompare(a);}).forEach(function(k){
-    var o2=document.createElement('option');o2.value=k;
-    var d=new Date(k+'-15'),nome=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-    o2.textContent=nome.charAt(0).toUpperCase()+nome.slice(1);sel.appendChild(o2);
+  // Sempre incluir meses de CFG_MESES
+  Object.keys(CFG_MESES).forEach(function(k){meses[k]=true;});
+  return meses;
+}
+
+function buildMesSel(){
+  var meses=getMesesComDados();
+  var anos=[...new Set(Object.keys(meses).map(function(k){return k.split('-')[0];}))].sort(function(a,b){return b-a;});
+  var hoje=new Date(),anoAtual=String(hoje.getFullYear());
+
+  if(!_anoSel||anos.indexOf(_anoSel)<0) _anoSel=anos[0]||anoAtual;
+
+  // Render anos
+  var anosWrap=document.getElementById('mes-grid-anos');
+  anosWrap.innerHTML='';
+  anos.forEach(function(ano){
+    var btn=document.createElement('button');
+    btn.className='mes-ano-btn'+(ano===_anoSel?' active':'');
+    btn.textContent=ano;
+    btn.addEventListener('click',function(){_anoSel=ano;buildMesSel();});
+    anosWrap.appendChild(btn);
   });
-  sel.value=(val&&sel.querySelector('option[value="'+val+'"]'))?val:'';
-  if(sel.value!==val)mesSel=null;
+
+  // Render meses do ano selecionado
+  var mesesWrap=document.getElementById('mes-grid-meses');
+  mesesWrap.innerHTML='';
+  var mesHoje=hoje.getMonth()+1;
+  for(var m=1;m<=12;m++){
+    var k=_anoSel+'-'+p2(m);
+    var temDados=!!meses[k];
+    var eAtual=(_anoSel===anoAtual&&m===mesHoje);
+    var eSel=(mesSel===k);
+    var eMesAtualSel=(mesSel===null&&eAtual);
+
+    var cel=document.createElement('button');
+    cel.className='mes-cel'+(eSel?' active':eAtual&&!mesSel?' atual active':eAtual?' atual':'')+((!temDados&&!eAtual)?' sem-dados':'');
+    cel.textContent=MESES_NOMES[m-1];
+    cel.setAttribute('data-k',k);
+    cel.setAttribute('data-atual',eAtual?'1':'0');
+    mesesWrap.appendChild(cel);
+  }
+
+  // Label do mês atual
+  var label=document.getElementById('mes-atual-label');
+  if(label){
+    if(!mesSel){
+      var iv=getInterval();
+      label.textContent='ciclo '+fD(iv.i)+'→'+fD(iv.f);
+    } else {
+      var d=new Date(mesSel+'-15'),nome=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+      label.textContent=nome.charAt(0).toUpperCase()+nome.slice(1);
+    }
+  }
 }
 
 // ── DIAS RESTANTES ──────────────────────────────────────
@@ -795,7 +857,19 @@ document.getElementById('cfg-mes-r').addEventListener('input',updCfgMesPrev);
 document.getElementById('cfg-mes-f').addEventListener('input',updCfgMesPrev);
 document.getElementById('cp-close').addEventListener('click',closeCatPanel);
 document.getElementById('cat-panel').addEventListener('click',function(e){if(e.target===this)closeCatPanel();});
-document.getElementById('mes-sel').addEventListener('change',function(){mesSel=this.value||null;render();});
+document.getElementById('mes-grid-meses').addEventListener('click',function(e){
+  var cel=e.target.closest('.mes-cel');
+  if(!cel)return;
+  var k=cel.getAttribute('data-k');
+  var hoje=new Date(),anoH=String(hoje.getFullYear()),mesH=p2(hoje.getMonth()+1);
+  var kHoje=anoH+'-'+mesH;
+  // Toque no mês atual = volta para ciclo (mesSel=null)
+  if(k===kHoje&&mesSel===null){return;} // já está no mês atual
+  mesSel=(k===kHoje&&mesSel!==null)?null:k===kHoje?null:k;
+  // Se selecionou mês atual, limpar
+  if(k===kHoje)mesSel=null;
+  render();
+});
 document.querySelectorAll('.tab').forEach(function(btn){btn.addEventListener('click',function(){goATab(this.getAttribute('data-tab'));});});
 document.getElementById('receitas-list').addEventListener('click',function(e){var btn=e.target.closest('.edit-btn[data-mk]');if(btn)openCfgMes(btn.getAttribute('data-mk'));});
 
