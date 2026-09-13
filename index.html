@@ -34,7 +34,8 @@ body{padding-bottom:90px}
 .home-btn-label{font-size:16px;font-weight:600;display:block;margin-bottom:4px}
 .home-btn-desc{font-size:11px;opacity:.8;display:block;line-height:1.4}
 .btn-lanc{background:#1a1a18;color:#fff}
-.btn-anal{background:#fff;color:#1a1a18;border:.5px solid #e8e6e0}
+.btn-anal{background:#fff;color:#1a1a18 !important;border:.5px solid #e8e6e0}
+.btn-anal .home-btn-label,.btn-anal .home-btn-desc{color:#1a1a18 !important}
 .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px 6px}
 .sum-card{background:#fff;border-radius:12px;border:.5px solid #e8e6e0;padding:11px 13px}
 .sum-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:600}
@@ -177,6 +178,8 @@ body{padding-bottom:90px}
   .edit-btn{background:#0d2540;border-color:#1a4070;color:#7ab8f5}
   .mini-cell{background:#2a2a28}
   .cfg-btn{border-color:#2e2e2b}
+  .btn-anal{background:#f0ede8 !important;color:#1a1a18 !important;border-color:#3a3a38}
+  .btn-anal .home-btn-label,.btn-anal .home-btn-desc,.btn-anal .home-btn-icon{color:#1a1a18 !important}
   .mes-ano-btn{background:#1e1e1c;border-color:#2e2e2b;color:#888}
   .mes-ano-btn.active{background:#f0ede8;color:#1a1a18;border-color:#f0ede8}
   .mes-cel{background:#1e1e1c;border-color:#2e2e2b;color:#f0ede8}
@@ -214,7 +217,7 @@ body{padding-bottom:90px}
         <span class="home-btn-desc">Registrar gasto ou compra parcelada</span>
       </button>
       <button class="home-btn btn-anal" id="btn-home-anal">
-        <span class="home-btn-icon" style="font-size:28px;font-style:normal">&#9783;</span>
+        <span class="home-btn-icon" style="font-size:22px;font-style:normal;font-weight:700;letter-spacing:-1px">&#9664;&#9654;</span>
         <span class="home-btn-label">An&#225;lise</span>
         <span class="home-btn-desc">Ver tetos, hist&#243;rico e nota do m&#234;s</span>
       </button>
