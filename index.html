@@ -67,7 +67,8 @@ body{padding-bottom:90px}
 .cat-card:active{opacity:.85;transform:scale(.99)}
 .cat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
 .cat-icon{width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-right:9px;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1}
-.cat-name{font-size:13px;font-weight:500;color:#1a1a18}
+.cat-name{font-size:13px;font-weight:500;color:#1a1a18;display:block}
+.cat-pct{font-size:9.5px;color:#888;margin-top:1px}
 .cat-spent{font-size:14px;font-weight:700}
 .cat-teto{font-size:11px;color:#555}
 .bar-bg{height:6px;border-radius:3px;background:#eeece6;overflow:hidden;margin-bottom:6px}
@@ -145,7 +146,7 @@ body{padding-bottom:90px}
 .rec-card{background:#fff;border:.5px solid #e8e6e0;border-radius:14px;padding:14px 15px;margin-bottom:10px;box-shadow:0 1px 3px rgba(26,26,24,.04)}
 .mes-ano-btn{padding:6px 12px;border-radius:20px;border:1.5px solid #e8e6e0;background:#fff;color:#555;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
 .mes-ano-btn.active{background:#1a1a18;color:#fff;border-color:#1a1a18}
-.mes-cel{padding:8px 4px;border-radius:10px;border:1.5px solid #e8e6e0;background:#fff;color:#1a1a18;font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
+.mes-cel{padding:10px 4px;border-radius:10px;border:1.5px solid #e8e6e0;background:#fff;color:#1a1a18;font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s;flex:0 0 58px;scroll-snap-align:start}
 .mes-cel:active{opacity:.7}
 .mes-cel.active{background:#1a1a18;color:#fff;border-color:#1a1a18;font-weight:700}
 .mes-cel.atual{border-color:#378ADD;color:#378ADD}
@@ -161,8 +162,8 @@ body{padding-bottom:90px}
   .header{background:#0d0d0c}
   .tabs,.sum-card,.cat-card,.hist-item,.parc-card,.sheet,.cat-panel-sheet,.parc-indic-card,.btn-anal,.rec-card{background:#1e1e1c;border-color:#2e2e2b}
   .tabs{border-bottom-color:#2e2e2b}
-  .sum-val,.cat-name,.cat-spent,.hist-cat,.hist-val,.parc-title,.parc-stat-val,.sheet h2,.cat-panel-title,.cat-panel-desc,.cat-panel-val,.parc-top-val,.home-title,.mini-val{color:#f0ede8}
-  .sum-label,.section-label,.grp-label,.hist-meta,.cat-saldo,.cat-teto,.parc-stat-label,.parc-meta,.cat-panel-sub,.parc-indic-label,.parc-top-label,.home-sub,.mini-lbl{color:#888}
+  .sum-val,.cat-name,.cat-spent,.hist-cat,.hist-val,.parc-title,.parc-stat-val,.sheet h2,.cat-panel-title,.cat-panel-desc,.cat-panel-val,.parc-top-val,.home-title,.mini-val,.rec-title{color:#f0ede8}
+  .sum-label,.section-label,.grp-label,.hist-meta,.cat-saldo,.cat-teto,.cat-pct,.parc-stat-label,.parc-meta,.cat-panel-sub,.parc-indic-label,.parc-top-label,.home-sub,.mini-lbl,.rec-sub{color:#888}
   .field select,.field input,.mes-sel{background:#141413;border-color:#2e2e2b;color:#f0ede8}
   .tipo-btn{background:#141413;border-color:#2e2e2b;color:#888}
   .tipo-btn.active{background:#f0ede8;color:#1a1a18;border-color:#f0ede8}
@@ -210,7 +211,6 @@ body{padding-bottom:90px}
   <div class="header-row">
     <h1>Sob Controle</h1>
     <div class="header-right">
-      <button class="cfg-btn" id="btn-cfg-mes">&#9881; m&#234;s</button>
       <button class="cfg-btn" id="btn-logout" title="Sair">&#8594;|</button>
       <div class="sync-dot" id="sdot"></div>
     </div>
@@ -230,12 +230,22 @@ body{padding-bottom:90px}
       <button class="home-btn btn-lanc" id="btn-home-lanc">
         <span class="home-btn-icon">+</span>
         <span class="home-btn-label">Lan&#231;amento</span>
-        <span class="home-btn-desc">Registrar gasto ou compra parcelada</span>
+        <span class="home-btn-desc">Gasto ou compra parcelada</span>
       </button>
       <button class="home-btn btn-anal" id="btn-home-anal">
         <span class="home-btn-icon">&#128202;</span>
         <span class="home-btn-label">An&#225;lise</span>
-        <span class="home-btn-desc">Ver tetos, hist&#243;rico e nota do m&#234;s</span>
+        <span class="home-btn-desc">Tetos, hist&#243;rico e nota do m&#234;s</span>
+      </button>
+      <button class="home-btn btn-anal" id="btn-home-parc">
+        <span class="home-btn-icon">&#128179;</span>
+        <span class="home-btn-label">Parcelas</span>
+        <span class="home-btn-desc">Compras parceladas ativas</span>
+      </button>
+      <button class="home-btn btn-anal" id="btn-home-rec">
+        <span class="home-btn-icon">&#128176;</span>
+        <span class="home-btn-label">Receitas</span>
+        <span class="home-btn-desc">Receita e fixos por m&#234;s</span>
       </button>
     </div>
   </div>
@@ -246,10 +256,10 @@ body{padding-bottom:90px}
     <button id="btn-voltar" style="background:#1a1a18;color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0">&#8592; In&#237;cio</button>
     <div id="mes-atual-label" style="font-size:12px;color:#888;flex:1;text-align:right"></div>
   </div>
-  <!-- Grid seletor de mês -->
+  <!-- Seletor de mês em scroll horizontal -->
   <div id="mes-grid-wrap" style="padding:0 14px 8px">
     <div id="mes-grid-anos" style="display:flex;gap:6px;margin-bottom:8px;overflow-x:auto;padding-bottom:2px"></div>
-    <div id="mes-grid-meses" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div>
+    <div id="mes-grid-meses" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scroll-snap-type:x proximity"></div>
   </div>
   <div id="nota-wrap"></div>
   <div id="mes-info-wrap"></div>
@@ -258,13 +268,32 @@ body{padding-bottom:90px}
   <div class="tabs">
     <button class="tab active" data-tab="tetos">Tetos</button>
     <button class="tab" data-tab="historico">Hist&#243;rico</button>
-    <button class="tab" data-tab="parcelas">Parcelas</button>
-    <button class="tab" data-tab="receitas">Receitas</button>
   </div>
   <div id="apg-tetos"><div class="section-label">Por categoria</div><div class="cats" id="cats"></div></div>
   <div id="apg-historico" style="display:none"><div class="hist-wrap" id="hist"></div></div>
-  <div id="apg-parcelas"  style="display:none"><div class="parc-wrap"><div class="parc-top" id="parc-top"></div><div class="parc-indic" id="parc-indic"></div><div class="section-label">Compras parceladas</div><div id="parc-list"></div></div></div>
-  <div id="apg-receitas"  style="display:none"><div style="padding:10px 14px 0"><div style="font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.8px">Receitas por m&#234;s</div><div style="font-size:11px;color:#888;margin-top:2px;margin-bottom:8px">consumo de cada m&#234;s pago com a receita do m&#234;s seguinte</div></div><div id="receitas-list" style="padding:0 14px"></div></div>
+</div>
+
+<div id="pg-parcelas" style="display:none">
+  <div style="padding:10px 14px 4px;display:flex;align-items:center;gap:8px">
+    <button id="btn-voltar-parc" style="background:#1a1a18;color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0">&#8592; In&#237;cio</button>
+    <div class="section-label" style="padding:0;flex:1;text-align:right">Compras parceladas</div>
+  </div>
+  <div class="parc-wrap"><div class="parc-top" id="parc-top"></div><div class="parc-indic" id="parc-indic"></div><div id="parc-list"></div></div>
+</div>
+
+<div id="pg-receitas" style="display:none">
+  <div style="padding:10px 14px 4px;display:flex;align-items:center;gap:8px">
+    <button id="btn-voltar-rec" style="background:#1a1a18;color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0">&#8592; In&#237;cio</button>
+    <div class="section-label" style="padding:0;flex:1;text-align:right">Receitas por m&#234;s</div>
+  </div>
+  <div style="padding:2px 14px 8px"><div style="font-size:11px;color:#888;line-height:1.4">Consumo de cada m&#234;s &#233; pago com a receita do m&#234;s seguinte.</div></div>
+  <div id="rec-atual-card" style="padding:0 14px 4px"></div>
+  <div style="padding:6px 14px 10px;display:flex;gap:8px;align-items:flex-end">
+    <div class="field" style="margin-bottom:0;flex:1"><label>M&#234;s</label><select id="add-mes-mes"></select></div>
+    <div class="field" style="margin-bottom:0;flex:1"><label>Ano</label><select id="add-mes-ano"></select></div>
+    <button id="btn-add-mes" style="background:#1a1a18;color:#fff;border:none;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Configurar</button>
+  </div>
+  <div id="receitas-list" style="padding:0 14px"></div>
 </div>
 
 <button class="fab" id="fab">+</button>
@@ -584,14 +613,13 @@ function render(){
     if(t===0&&sp===0)return;
     var pct=t>0?Math.min(100,Math.round(sp/t*100)):100,over2=sp>t&&t>0,sl=t-sp;
     var txt=t===0?fB(sp)+' (sem teto)':over2?'\u26A0 Estourou '+fB(Math.abs(sl)):sl>0?'Saldo: '+fB(sl)+' ('+pct+'% usado)':'No limite';
+    var pctRec=cat.id==='parcelas'?'valor fixo':Math.round((PCTS[cat.id]||0)*100)+'% da receita';
     var d=document.createElement('div');d.className='cat-card';
-    d.innerHTML='<div class="cat-row"><div style="display:flex;align-items:center"><div class="cat-icon" style="background:'+cat.cor+'22">'+cat.ic+'</div><span class="cat-name">'+cat.name+'</span></div><div style="text-align:right"><div class="cat-spent" style="color:'+(over2?'#A32D2D':cat.cor)+'">'+fB(sp)+'</div>'+(t>0?'<div class="cat-teto">de '+fB(t)+'</div>':'')+'</div></div>'+(t>0?'<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+barColor(pct)+'"></div></div>':'')+' <div class="cat-saldo'+(over2?' over':'')+'">'+txt+'</div>';
+    d.innerHTML='<div class="cat-row"><div style="display:flex;align-items:center"><div class="cat-icon" style="background:'+cat.cor+'22">'+cat.ic+'</div><div><span class="cat-name">'+cat.name+'</span><div class="cat-pct">'+pctRec+'</div></div></div><div style="text-align:right"><div class="cat-spent" style="color:'+(over2?'#A32D2D':cat.cor)+'">'+fB(sp)+'</div>'+(t>0?'<div class="cat-teto">de '+fB(t)+'</div>':'')+'</div></div>'+(t>0?'<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+barColor(pct)+'"></div></div>':'')+' <div class="cat-saldo'+(over2?' over':'')+'">'+txt+'</div>';
     d.addEventListener('click',function(){openCatPanel(cat,gastos,pv.list);});
     el.appendChild(d);
   });
   if(aTab==='historico')renderHist(gastos);
-  if(aTab==='parcelas')renderParc(pv);
-  if(aTab==='receitas')renderReceitas();
 }
 function sc(l,v,cls){return '<div class="sum-card"><div class="sum-label">'+l+'</div><div class="sum-val '+cls+'">'+v+'</div></div>';}
 function miniCellHTML(lbl,val,cor){return '<div style="background:#fff;border-radius:10px;border:.5px solid #e8e6e0;padding:8px;text-align:center"><div style="font-size:9px;color:#555;text-transform:uppercase;margin-bottom:2px">'+lbl+'</div><div style="font-size:13px;font-weight:600;color:'+cor+'">'+val+'</div></div>';}
@@ -647,7 +675,19 @@ function renderParc(pv){
   });
 }
 
+function renderRecAtual(){
+  var el=document.getElementById('rec-atual-card');if(!el)return;
+  var sobra=Math.max(0,CFG.receita-CFG.fixos);
+  el.innerHTML='<div class="rec-card" style="border-color:#378ADD"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-size:13px;font-weight:600;color:#378ADD">● Ciclo atual (fallback)</div><div style="font-size:10px;color:#888;margin-top:2px">usado quando o mês ainda não tem receita própria configurada abaixo</div></div><button class="edit-btn" id="btn-edit-rec-atual">editar</button></div><div class="mini-grid3"><div class="mini-cell"><div class="mini-lbl">Receita</div><div class="mini-val" style="color:#27500A">'+fB(CFG.receita)+'</div></div><div class="mini-cell"><div class="mini-lbl">Fixos</div><div class="mini-val" style="color:#A32D2D">'+fB(CFG.fixos)+'</div></div><div class="mini-cell"><div class="mini-lbl">Sobra</div><div class="mini-val" style="color:'+(sobra>0?'#27500A':'#A32D2D')+'">'+fB(sobra)+'</div></div></div></div>';
+  document.getElementById('btn-edit-rec-atual').addEventListener('click',function(){
+    document.getElementById('cfg-r').value=CFG.receita||'';
+    document.getElementById('cfg-f').value=CFG.fixos||'';
+    updCfgPrev();
+    document.getElementById('cfg-overlay').classList.add('open');
+  });
+}
 function renderReceitas(){
+  renderRecAtual();
   var wrap=document.getElementById('receitas-list');
   if(!wrap)return;
   wrap.innerHTML='';
@@ -665,8 +705,8 @@ function renderReceitas(){
 
     var hdr=document.createElement('div');hdr.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px';
     var hdrL=document.createElement('div');
-    var t1=document.createElement('div');t1.style.cssText='font-size:13px;font-weight:600;color:#1a1a18';t1.textContent=nome;
-    var t2=document.createElement('div');t2.style.cssText='font-size:10px;color:#888;margin-top:2px';t2.textContent=cfg.label||'';
+    var t1=document.createElement('div');t1.className='rec-title';t1.style.fontSize='13px';t1.style.fontWeight='600';t1.textContent=nome;
+    var t2=document.createElement('div');t2.className='rec-sub';t2.style.fontSize='10px';t2.style.marginTop='2px';t2.textContent=cfg.label||'';
     hdrL.appendChild(t1);hdrL.appendChild(t2);
     var btn=document.createElement('button');btn.className='edit-btn';btn.setAttribute('data-mk',k);btn.textContent='editar';
     hdr.appendChild(hdrL);hdr.appendChild(btn);card.appendChild(hdr);
@@ -723,13 +763,19 @@ function openCatPanel(cat,gastos,parcList){
 function closeCatPanel(){document.getElementById('cat-panel').classList.remove('open');}
 
 // ── NAVEGAÇÃO ───────────────────────────────────────────
-function goHome(){pg='home';document.getElementById('pg-home').style.display='block';document.getElementById('pg-analise').style.display='none';document.getElementById('fab').classList.remove('visible');}
-function goAnalise(){pg='analise';document.getElementById('pg-home').style.display='none';document.getElementById('pg-analise').style.display='block';document.getElementById('fab').classList.add('visible');render();}
-function setCycle(t){cycle=t;['thiago','taina','familia'].forEach(function(x){document.getElementById('btn-'+x).classList.toggle('active',x===t);});if(pg==='analise')render();}
+function hideAllPages(){
+  ['pg-home','pg-analise','pg-parcelas','pg-receitas'].forEach(function(id){document.getElementById(id).style.display='none';});
+  document.getElementById('fab').classList.remove('visible');
+}
+function goHome(){pg='home';hideAllPages();document.getElementById('pg-home').style.display='block';}
+function goAnalise(){pg='analise';hideAllPages();document.getElementById('pg-analise').style.display='block';document.getElementById('fab').classList.add('visible');render();}
+function goParcelas(){pg='parcelas';hideAllPages();document.getElementById('pg-parcelas').style.display='block';document.getElementById('fab').classList.add('visible');renderParc(getParcVig());}
+function goReceitas(){pg='receitas';hideAllPages();document.getElementById('pg-receitas').style.display='block';document.getElementById('fab').classList.add('visible');renderReceitas();}
+function setCycle(t){cycle=t;['thiago','taina','familia'].forEach(function(x){document.getElementById('btn-'+x).classList.toggle('active',x===t);});if(pg==='analise')render();if(pg==='parcelas')renderParc(getParcVig());}
 function goATab(t){
   aTab=t;
   document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-tab')===t);});
-  ['tetos','historico','parcelas','receitas'].forEach(function(x){document.getElementById('apg-'+x).style.display=x===t?'block':'none';});
+  ['tetos','historico'].forEach(function(x){document.getElementById('apg-'+x).style.display=x===t?'block':'none';});
   render();
 }
 
@@ -865,12 +911,18 @@ function initFB(){
 // ── INIT ────────────────────────────────────────────────
 loadAll();
 C.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.ic+' '+c.name;document.getElementById('i-cat').appendChild(o);});
+MESES_NOMES.forEach(function(nm,i){var o=document.createElement('option');o.value=p2(i+1);o.textContent=nm;document.getElementById('add-mes-mes').appendChild(o);});
+(function(){var anoAtual=new Date().getFullYear();for(var y=anoAtual-1;y<=anoAtual+1;y++){var o=document.createElement('option');o.value=String(y);o.textContent=String(y);if(y===anoAtual)o.selected=true;document.getElementById('add-mes-ano').appendChild(o);}})();
 updateDays();
 
 // Event listeners
 document.getElementById('btn-home-lanc').addEventListener('click',openModal);
 document.getElementById('btn-home-anal').addEventListener('click',goAnalise);
+document.getElementById('btn-home-parc').addEventListener('click',goParcelas);
+document.getElementById('btn-home-rec').addEventListener('click',goReceitas);
 document.getElementById('btn-voltar').addEventListener('click',goHome);
+document.getElementById('btn-voltar-parc').addEventListener('click',goHome);
+document.getElementById('btn-voltar-rec').addEventListener('click',goHome);
 document.getElementById('fab').addEventListener('click',openModal);
 document.getElementById('btn-salvar').addEventListener('click',save);
 document.getElementById('t-avulso').addEventListener('click',function(){setTipo('avulso');});
@@ -878,16 +930,9 @@ document.getElementById('t-parc').addEventListener('click',function(){setTipo('p
 document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.getElementById('cfg-overlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 document.getElementById('cfg-mes-overlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
-document.getElementById('btn-cfg-mes').addEventListener('click',function(){
-  var cfg=getCfgMes(mesSel);
-  document.getElementById('cfg-r').value=cfg.receita||'';
-  document.getElementById('cfg-f').value=cfg.fixos||'';
-  updCfgPrev();
-  document.getElementById('cfg-overlay').classList.add('open');
-});
 document.getElementById('cfg-save').addEventListener('click',function(){
   var r=parseFloat(document.getElementById('cfg-r').value),f=parseFloat(document.getElementById('cfg-f').value);
-  if(r>0&&f>=0){CFG.receita=r;CFG.fixos=f;saveCfg();document.getElementById('cfg-overlay').classList.remove('open');if(pg==='analise')render();}
+  if(r>0&&f>=0){CFG.receita=r;CFG.fixos=f;saveCfg();document.getElementById('cfg-overlay').classList.remove('open');if(pg==='analise')render();if(pg==='receitas')renderReceitas();}
 });
 document.getElementById('cfg-mes-save').addEventListener('click',function(){
   var k=document.getElementById('cfg-mes-key').value,r=parseFloat(document.getElementById('cfg-mes-r').value),f=parseFloat(document.getElementById('cfg-mes-f').value);
@@ -897,6 +942,7 @@ document.getElementById('cfg-mes-save').addEventListener('click',function(){
     try{var ovr=JSON.parse(localStorage.getItem('sob_meses_ovr')||'{}');ovr[k]={receita:r,fixos:f};localStorage.setItem('sob_meses_ovr',JSON.stringify(ovr));}catch(e){}
     document.getElementById('cfg-mes-overlay').classList.remove('open');
     if(pg==='analise')render();
+    if(pg==='receitas')renderReceitas();
   }
 });
 document.getElementById('cfg-r').addEventListener('input',updCfgPrev);
@@ -920,6 +966,10 @@ document.getElementById('mes-grid-meses').addEventListener('click',function(e){
 });
 document.querySelectorAll('.tab').forEach(function(btn){btn.addEventListener('click',function(){goATab(this.getAttribute('data-tab'));});});
 document.getElementById('receitas-list').addEventListener('click',function(e){var btn=e.target.closest('.edit-btn[data-mk]');if(btn)openCfgMes(btn.getAttribute('data-mk'));});
+document.getElementById('btn-add-mes').addEventListener('click',function(){
+  var m=document.getElementById('add-mes-mes').value,a=document.getElementById('add-mes-ano').value;
+  openCfgMes(a+'-'+m);
+});
 document.getElementById('btn-login').addEventListener('click',doLogin);
 document.getElementById('li-senha').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
 document.getElementById('li-email').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('li-senha').focus();});
