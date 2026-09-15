@@ -191,11 +191,25 @@ body{padding-bottom:90px}
 </head>
 <body>
 
+<div id="pg-login" style="display:flex;position:fixed;inset:0;background:#f4f3ef;z-index:500;align-items:center;justify-content:center;padding:24px">
+  <div style="width:100%;max-width:340px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:20px;font-weight:700;color:#1a1a18">Sob Controle</div>
+      <div style="font-size:12px;color:#888780;margin-top:4px">Entre para acessar o or&#231;amento</div>
+    </div>
+    <div class="field"><label>E-mail</label><input type="email" id="li-email" autocomplete="username" inputmode="email"></div>
+    <div class="field"><label>Senha</label><input type="password" id="li-senha" autocomplete="current-password"></div>
+    <div id="li-erro" style="display:none;color:#A32D2D;font-size:12px;margin:-6px 0 13px"></div>
+    <button id="btn-login" class="btn-save" style="width:100%">Entrar</button>
+  </div>
+</div>
+
 <div class="header">
   <div class="header-row">
     <h1>Sob Controle</h1>
     <div class="header-right">
       <button class="cfg-btn" id="btn-cfg-mes">&#9881; m&#234;s</button>
+      <button class="cfg-btn" id="btn-logout" title="Sair">&#8594;|</button>
       <div class="sync-dot" id="sdot"></div>
     </div>
   </div>
@@ -799,20 +813,49 @@ var FB={apiKey:"AIzaSyAxHWmo4uuQoAEnK1zEunk91MIh_YS-5Lw",authDomain:"orcamento-f
 function sdot(s){document.getElementById('sdot').className='sync-dot'+(s?' '+s:'');}
 function fbSave(){if(!db)return;sdot('syncing');Promise.all([db.ref('g').set(G),db.ref('p').set(P)]).then(function(){sdot('');}).catch(function(){sdot('error');});}
 function merge(local,remote){var ts={};local.forEach(function(x){if(x&&x.ts)ts[x.ts]=true;});remote.forEach(function(x){if(x&&x.ts&&!ts[x.ts]){local.push(x);ts[x.ts]=true;}});var ts2={};remote.forEach(function(x){if(x&&x.ts)ts2[x.ts]=true;});return local.some(function(x){return x.ts&&!ts2[x.ts];});}
+var dbSyncOn=false;
+function startDbSync(){
+  if(dbSyncOn)return;dbSyncOn=true;
+  db=firebase.database();sdot('syncing');
+  db.ref('g').on('value',function(snap){var rem=toArr(snap.val());if(rem.length){var nu=merge(G,rem);saveAll();if(nu)db.ref('g').set(G);if(pg==='analise')render();}else if(G.length)db.ref('g').set(G);sdot('');});
+  db.ref('p').on('value',function(snap){var rem=toArr(snap.val());if(rem.length){var nu=merge(P,rem);saveAll();if(nu)db.ref('p').set(P);if(pg==='analise')render();}else if(P.length)db.ref('p').set(P);});
+}
+function stopDbSync(){if(!dbSyncOn)return;dbSyncOn=false;if(db){db.ref('g').off();db.ref('p').off();}}
+function showLogin(){document.getElementById('pg-login').style.display='flex';document.getElementById('li-erro').style.display='none';}
+function hideLogin(){document.getElementById('pg-login').style.display='none';}
+function doLogin(){
+  var email=document.getElementById('li-email').value.trim();
+  var senha=document.getElementById('li-senha').value;
+  var erroEl=document.getElementById('li-erro');
+  erroEl.style.display='none';
+  if(!email||!senha){erroEl.textContent='Preencha e-mail e senha.';erroEl.style.display='block';return;}
+  var btn=document.getElementById('btn-login');btn.disabled=true;btn.textContent='Entrando...';
+  firebase.auth().signInWithEmailAndPassword(email,senha).catch(function(){
+    erroEl.textContent='Não foi possível entrar. Verifique e-mail e senha.';erroEl.style.display='block';
+  }).finally(function(){btn.disabled=false;btn.textContent='Entrar';});
+}
 function initFB(){
   var s1=document.createElement('script');
   s1.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
   s1.onload=function(){
     var s2=document.createElement('script');
-    s2.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+    s2.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js';
     s2.onload=function(){
-      try{
-        firebase.initializeApp(FB);db=firebase.database();sdot('syncing');
-        db.ref('g').on('value',function(snap){var rem=toArr(snap.val());if(rem.length){var nu=merge(G,rem);saveAll();if(nu)db.ref('g').set(G);if(pg==='analise')render();}else if(G.length)db.ref('g').set(G);sdot('');});
-        db.ref('p').on('value',function(snap){var rem=toArr(snap.val());if(rem.length){var nu=merge(P,rem);saveAll();if(nu)db.ref('p').set(P);if(pg==='analise')render();}else if(P.length)db.ref('p').set(P);});
-      }catch(e){sdot('error');}
+      var s3=document.createElement('script');
+      s3.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+      s3.onload=function(){
+        try{
+          firebase.initializeApp(FB);
+          firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){});
+          firebase.auth().onAuthStateChanged(function(user){
+            if(user){hideLogin();startDbSync();}
+            else{stopDbSync();showLogin();}
+          });
+        }catch(e){sdot('error');}
+      };
+      s3.onerror=function(){sdot('error');};document.head.appendChild(s3);
     };
-    s2.onerror=function(){sdot('error');};document.head.appendChild(s2);
+    s2.onerror=function(){var e=document.getElementById('li-erro');e.textContent='Erro ao carregar login. Verifique sua internet.';e.style.display='block';};document.head.appendChild(s2);
   };
   s1.onerror=function(){sdot('error');};document.head.appendChild(s1);
 }
@@ -875,6 +918,10 @@ document.getElementById('mes-grid-meses').addEventListener('click',function(e){
 });
 document.querySelectorAll('.tab').forEach(function(btn){btn.addEventListener('click',function(){goATab(this.getAttribute('data-tab'));});});
 document.getElementById('receitas-list').addEventListener('click',function(e){var btn=e.target.closest('.edit-btn[data-mk]');if(btn)openCfgMes(btn.getAttribute('data-mk'));});
+document.getElementById('btn-login').addEventListener('click',doLogin);
+document.getElementById('li-senha').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+document.getElementById('li-email').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('li-senha').focus();});
+document.getElementById('btn-logout').addEventListener('click',function(){if(firebase&&firebase.auth)firebase.auth().signOut();});
 
 initFB();
 </script>
